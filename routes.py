@@ -67,5 +67,5 @@ def get_app_keys(appid):
 
 # App users page
 @main.get("/applications/<appid>/users/")
-def get_app_keys(appid):
+def get_app_users(appid):
     return ""
