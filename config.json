@@ -1,6 +1,6 @@
 {
-    "db_name": "",
-    "db_path": ""
+    "db_name": "boron",
+    "db_path": "boron.db"
 
 
 }

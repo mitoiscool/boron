@@ -5,7 +5,11 @@ from flask import (
     request,
     redirect,
     url_for,
+    current_app,
+    make_response
 )
+import sqlite3
+from boron.routes.application import application
 
 auth = Blueprint("auth", __name__, url_prefix="/auth/")
 
@@ -15,14 +19,23 @@ def get_login():
 
 @auth.post("login")
 def login():
-    return ""
+    return make_response(redirect(url_for(application.applications_home)))
 
 # Developer Register
 
 @auth.get("register")
 def get_register():
-    return render_template("/auth/login.html")
+    return render_template("/auth/register.html")
 
 @auth.post("register")
 def register():
-    return ""
+    """
+    args:
+
+    email
+    pass
+    cpass (confirm password serverside)
+
+    """
+
+    return make_response(redirect(url_for(application.applications_home)))
