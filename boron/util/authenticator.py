@@ -20,8 +20,9 @@ def login(email, password):
     return {"success": True, "session": session}  # return session for further manipulation
 
 
+def logout(session):
+    query("UPDATE developers SET session = ? WHERE session = ?", ('logged out', session))
 
-    
     
     
 

@@ -10,7 +10,8 @@ from flask import (
 )
 import sqlite3
 from boron.routes.application import application
-from boron.util.authenticator import login as lgn
+from boron.util.authenticator import login as lgn;
+from boron.util.authenticator import logout
 
 auth = Blueprint("auth", __name__, url_prefix="/auth/")
 
@@ -36,3 +37,13 @@ def login():
     response.set_cookie('session', resp['session'])
     
     return response
+
+@auth.post("logout")
+def logout():
+    sessionToken = request.cookies['session']
+    if sessionToken != None:
+        # invalidate session in the db
+        logout(sessionToken)
+
+    return make_response(redirect(url_for(auth.login)))
+    
