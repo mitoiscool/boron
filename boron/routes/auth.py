@@ -46,4 +46,3 @@ def logout():
         logout(sessionToken)
 
     return make_response(redirect(url_for(auth.login)))
-    

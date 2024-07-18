@@ -35,3 +35,14 @@ def create_user(email, password):
     
     hashedPass = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     query("INSERT INTO developers (email, password) VALUES (?, ?);", (email, hashedPass))
+
+
+def logged_in(request) -> bool:
+    session = request.cookies.get('session')
+    if session == None:
+        return False
+    
+    if len(query("SELECT email FROM developers WHERE session = ?", (session,))) == 0:
+        return False # check if session exists in db
+    
+    return True
