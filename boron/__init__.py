@@ -1,5 +1,5 @@
 from flask import Flask
-
+import json
 
 def create_app():
     app = Flask(__name__)
@@ -10,5 +10,7 @@ def create_app():
     app.register_blueprint(auth)
     app.register_blueprint(application)
     app.register_blueprint(api)
+
+    app.cfg = json.load(open("config.json"))
 
     return app
