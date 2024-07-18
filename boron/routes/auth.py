@@ -20,22 +20,3 @@ def get_login():
 @auth.post("login")
 def login():
     return make_response(redirect(url_for(application.applications_home)))
-
-# Developer Register
-
-@auth.get("register")
-def get_register():
-    return render_template("/auth/register.html")
-
-@auth.post("register")
-def register():
-    """
-    args:
-
-    email
-    pass
-    cpass (confirm password serverside)
-
-    """
-
-    return make_response(redirect(url_for(application.applications_home)))
