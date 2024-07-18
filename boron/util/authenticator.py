@@ -7,8 +7,11 @@ def login(email, password):
 
     realPass = query("SELECT password FROM developers WHERE username = ?;", (email))
 
+    if not realPass: #  this may not work due to rows being returned
+        return {"success": False, "message": "User does not exist."}
+
     if not bcrypt.checkpw(password.encode('utf-8'), realPass): #  invalid password
-        return {"success": False, "message": "Invalid Password"}
+        return {"success": False, "message": "Invalid password."}
     
     # else, create session token and assign it to user in db
     session = rnd_string(15)

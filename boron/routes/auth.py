@@ -10,7 +10,7 @@ from flask import (
 )
 import sqlite3
 from boron.routes.application import application
-from boron.util.authenticator import login
+from boron.util.authenticator import login as lgn
 
 auth = Blueprint("auth", __name__, url_prefix="/auth/")
 
@@ -27,6 +27,12 @@ def login():
     make error field to display in login form
     """
 
-    
+    resp = lgn(request.form.get('email'), request.form.get('pass'))
 
-    return make_response(redirect(url_for(application.applications_home)))
+    if resp['success'] == False: # there was an error
+        return render_template("/auth/login.html", error=resp['message'])
+
+    response = make_response(redirect(url_for(application.applications_home)))
+    response.set_cookie('session', resp['session'])
+    
+    return response
