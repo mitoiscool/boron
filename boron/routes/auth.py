@@ -10,6 +10,7 @@ from flask import (
 )
 import sqlite3
 from boron.routes.application import application
+from boron.util.authenticator import login
 
 auth = Blueprint("auth", __name__, url_prefix="/auth/")
 
@@ -19,4 +20,13 @@ def get_login():
 
 @auth.post("login")
 def login():
+    """
+    email
+    pass
+    
+    make error field to display in login form
+    """
+
+    
+
     return make_response(redirect(url_for(application.applications_home)))
