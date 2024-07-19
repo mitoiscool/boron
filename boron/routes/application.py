@@ -15,6 +15,10 @@ application = Blueprint("application", __name__, url_prefix="/applications/")
 
 @application.get("home")
 def applications_home():
+
+    if not logged_in(request):
+        return make_response(redirect(url_for("auth.get_login")))
+    
     dev = get_developer(request.cookies.get['session'])
     
     return render_template("panel/panel_home.html", dev = dev, apps=query("SELECT * FROM applications WHERE dev_id = ?", (dev.id,)))
@@ -22,18 +26,48 @@ def applications_home():
 # Create app (post)
 @application.post("create")
 def create_app():
+    """
+    Form args:
+    appname
+    """
 
-    #if not logged_in(request):
-        #return make_response(redirect(url_for(auth.login)))
+    if not logged_in(request):
+        return make_response(redirect(url_for("auth.get_login")))
+
+    appName = request.form.get('appname')
+    if not appName:
+        abort(422) # unprocessable request
+
+    dev = get_developer(request.cookies.get['session'])
+
+    query("INSERT INTO applications (dev_id, name) VALUES (?, ?)", (dev.id, appName))
+
+    return make_response(redirect(url_for("application.applications_home")))
+
+    
     return ""
 
 # Delete app (post)
 @application.post("<appid>/delete")
 def delete_app():
 
-    #if not logged_in(request):
-        #return make_response(redirect(url_for(""")))
-    return ""
+    """
+    appid - provide app's id for deletion
+    """
+
+    if not logged_in(request):
+        return make_response(redirect(url_for("auth.get_login")))
+
+    appId = request.form.get('appid')
+    if not appId:
+        abort(422) # unprocessable request
+
+    dev = get_developer(request.cookies.get['session'])
+
+    # ensure it is the developer's app
+    query("DELETE FROM applications WHERE dev_id = ? AND id = ?", (dev.id, appId))
+
+    return make_response(redirect(url_for("application.applications_home")))
 
 # App home page
 @application.get("<appid>/view")
