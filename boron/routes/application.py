@@ -10,7 +10,7 @@ from flask import (
 from boron.util.authenticator import logged_in
 from boron.util.db import query
 from boron.util.general import get_developer
-from boron.util.apputil import get_application, delete_application
+from boron.util.apputil import get_application, delete_application, get_application_users
 
 application = Blueprint("application", __name__, url_prefix="/applications/")
 
@@ -84,11 +84,12 @@ def get_app_users(appid):
 
     dev = get_developer(request.cookies.get('session'))
 
-    app = get_application(dev, appid)
-
-    users = query("SELECT ")
-
-    return render_template("panel/app/app_home.html", dev=dev, users=users, page=2)
+    return render_template("panel/app/app_home.html", 
+                           dev=dev, 
+                           users=get_application_users(
+                               dev, appid
+                           ),
+                             page=2)
 
 # App keys page
 @application.get("<appid>/keys/")
@@ -97,8 +98,9 @@ def get_app_keys(appid):
     if not logged_in(request):
         return make_response(redirect(url_for("auth.get_login")))
 
-    if not appid:
-        abort(422) # unprocessable request
+    dev = get_developer(request.cookies.get('session'))
+
+    
 
     
 

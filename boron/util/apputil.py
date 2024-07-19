@@ -23,13 +23,28 @@ def delete_application(dev, appid):
 def get_application_users(dev, appid):
     if not appid:
         abort(422) # unprocessable request
-    
-    # query the app-users map to find all uids for this app, then return a list from the raw users table based on uids
-        
-    userIds = query("SELECT user_id FROM app_user WHERE app_id = ?", (appid,))
 
-    users = query("") # use execute many, iterate through users
-        
+    # query the app-users map to find all uids for this app, then return a list from the raw users table based on uids
+
+    userIds = query("SELECT * FROM app_user WHERE app_id = ?", (appid,))
+
+    users = []
+
+    for userId in userIds:
+        users.append(
+            get_application_user(userId, appid)
+        )
+
+def get_application_user(userIdRecord, appId):
+    try:
+        if userIdRecord.app_id != appId:
+            abort(403) // forbidden
+        return query("SELECT * FROM users WHERE id = ", (userIdRecord.user_id,))
+    except:
+        abort(404)
+
+
+
 def create_application_user(dev, appid, user, password):
 
     """
