@@ -33,7 +33,7 @@ def login():
     if resp['success'] == False: # there was an error
         return render_template("/auth/login.html", error=resp['message'])
 
-    response = make_response(redirect(url_for(application.applications_home)))
+    response = make_response(redirect(url_for("application.applications_home")))
     response.set_cookie('session', resp['session'])
     
     return response
@@ -45,4 +45,4 @@ def logout():
         # invalidate session in the db
         logout(sessionToken)
 
-    return make_response(redirect(url_for(auth.login)))
+    return make_response(redirect(url_for("auth.login")))

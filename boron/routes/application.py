@@ -9,29 +9,15 @@ from flask import (
 )
 from boron.util.authenticator import logged_in
 from boron.util.db import query
+from boron.util.general import get_developer
 
 application = Blueprint("application", __name__, url_prefix="/applications/")
 
 @application.get("home")
 def applications_home():
-
-    #if not logged_in(request):
-        #return make_response(redirect(url_for(auth.login))) # NOTE THIS DOES NOT WORK DO TO CIRCULAR IMPORTS
+    dev = get_developer(request.cookies.get['session'])
     
-    query("SELECT ")
-    
-    
-    return render_template("panel/panel_home.html", ctx=)
-
-    return ""
-
-# Create app page
-@application.get("create")
-def get_create_app():
-
-    #if not logged_in(request):
-        #return make_response(redirect(url_for(auth.login)))
-    return ""
+    return render_template("panel/panel_home.html", dev = dev, apps=query("SELECT * FROM applications WHERE dev_id = ?", (dev.id,)))
 
 # Create app (post)
 @application.post("create")
@@ -42,15 +28,15 @@ def create_app():
     return ""
 
 # Delete app (post)
-@application.post("/delete")
+@application.post("<appid>/delete")
 def delete_app():
 
     #if not logged_in(request):
-        #return make_response(redirect(url_for(auth.login)))
+        #return make_response(redirect(url_for(""")))
     return ""
 
 # App home page
-@application.get("<appid>/")
+@application.get("<appid>/view")
 def get_app(appid):
 
     #if not logged_in(request):
@@ -72,3 +58,10 @@ def get_app_users(appid):
     #if not logged_in(request):
         #return make_response(redirect(url_for(auth.login)))
     return ""
+
+#@application.context_processor
+#def populate_ctx():
+#    return {
+        # get user info
+        #request.cookies.get('session')
+#    }
