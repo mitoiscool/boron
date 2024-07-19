@@ -7,18 +7,19 @@
     <img src="avatar.png" alt="user avatar" />
     <div>
       <strong>{{ context.email }}</strong>
+      <span>{{ len(app) }} app(s) in use</span>
     </div>
   </div>
   <div class="grid gap-4 grid-cols-3 grid-rows-3">
     {% for app in app %}
-      <div class="p-4 bg-fuchsia-500 shadow-lg rounded-lg">
+      <div class="p-4 bg-teal-900 shadow-lg rounded-lg">
         <div class="flex">
           <div>
             <strong>{{ app.name }}</strong>
             <span>ID: {{ app.id }}</span>
           </div>
         </div>
-        <a href="{{ url_for('application.get_app', app.id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">View</a>
+        <a href="{{ url_for('application.get_app', app.id) }}" class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-full">View</a>
         <a href="{{ url_for('application.delete_app', app.id) }}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">Delete</a>
       </div>
     {% endfor %}

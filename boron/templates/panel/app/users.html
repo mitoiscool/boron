@@ -1,0 +1,20 @@
+{% extends 'panel/app/base.html' %}
+{% block head %}
+  <title>Users</title>
+{% endblock %}
+{% block body %}
+  <table class="table-auto">
+    <thead>
+      <tr>
+        <th>User</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in user %}
+        <tr>
+          <td>{{ user }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
