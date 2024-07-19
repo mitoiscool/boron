@@ -44,28 +44,21 @@ def create_app():
 
     return make_response(redirect(url_for("application.applications_home")))
 
-    
-    return ""
-
 # Delete app (post)
 @application.post("<appid>/delete")
-def delete_app():
+def delete_app(appid):
 
-    """
-    appid - provide app's id for deletion
-    """
 
     if not logged_in(request):
         return make_response(redirect(url_for("auth.get_login")))
 
-    appId = request.form.get('appid')
-    if not appId:
+    if not appid:
         abort(422) # unprocessable request
 
     dev = get_developer(request.cookies.get['session'])
 
     # ensure it is the developer's app
-    query("DELETE FROM applications WHERE dev_id = ? AND id = ?", (dev.id, appId))
+    query("DELETE FROM applications WHERE dev_id = ? AND id = ?", (dev.id, appid))
 
     return make_response(redirect(url_for("application.applications_home")))
 
@@ -73,9 +66,20 @@ def delete_app():
 @application.get("<appid>/view")
 def get_app(appid):
 
-    #if not logged_in(request):
-        #return make_response(redirect(url_for(auth.login)))
-    return ""
+    if not logged_in(request):
+        return make_response(redirect(url_for("auth.get_login")))
+
+    if not appid:
+        abort(422) # unprocessable request
+
+    dev = get_developer(request.cookies.get('session'))
+
+    app = query("SELECT * FROM applications WHERE dev_id = ? AND id = ?", (dev.id, appid))
+
+    if len(app) < 1:
+        abort(404)
+
+    return render_template("panel/app/app_home.html", dev=dev, app=app[0])
 
 # App keys page
 @application.get("<appid>/keys/")
