@@ -1,6 +1,6 @@
 {
     "db_name": "boron",
-    "db_path": "boron.db"
+    "db_path": "sqlite:///boron.db"
 
 
 }
