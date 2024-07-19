@@ -5,7 +5,7 @@ from flask import abort, Response
 
 def login(email, password):
 
-    realPass = query("SELECT password FROM developers WHERE username = ?;", (email))
+    realPass = query("SELECT password FROM developers WHERE username = ?;", (email))[0].password
 
     if not realPass: #  this may not work due to rows being returned
         return {"success": False, "message": "User does not exist."}
