@@ -1,4 +1,4 @@
-from db import query
+from boron.util.db import query
 from flask import abort
 
 def get_application(dev, appid):
