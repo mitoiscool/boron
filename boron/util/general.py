@@ -1,6 +1,6 @@
 import random
 import string
-from db import query
+from boron.util.db import query
 from flask import abort
 
 def rnd_string(length):
