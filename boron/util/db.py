@@ -1,9 +1,8 @@
-import sqlite3
 from flask import current_app
 import records
+from loguru import logger
 
 
 def query(query: str, args: dict = {}):
-    print(f"boron.util.db.query: query = {query}, args = {args}")
-    database = records.Database(current_app.cfg["db_path"])
-    return database.query(query, **args)
+    logger.trace(f"database: query = '{query}', args = {args}")
+    return current_app.db.query(query, fetchall=True, **args)

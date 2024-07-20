@@ -8,7 +8,7 @@ from flask import (
     current_app,
     make_response,
 )
-import sqlite3
+from loguru import logger
 from boron.routes.application import application
 from boron.util.authenticator import login as lgn
 from boron.util.authenticator import logout as lgo
@@ -29,7 +29,9 @@ def login():
 
     make error field to display in login form
     """
+
     e, p = request.form.get("email"), request.form.get("pass")
+    logger.trace(f"trying to login with email = '{e}', password = '{p}'")
     resp = lgn(e, p)
 
     if not resp["success"]:  # there was an error

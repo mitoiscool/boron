@@ -1,5 +1,14 @@
 from flask import Flask
+from records import Database
 import json
+from loguru import logger
+from sys import stdout
+
+logger.remove(0)
+logger.add(stdout, level="TRACE")
+
+logger.debug("logger initialized")
+
 
 def create_app():
     app = Flask(__name__)
@@ -12,5 +21,6 @@ def create_app():
     app.register_blueprint(api)
 
     app.cfg = json.load(open("config.json"))
+    app.db = Database(app.cfg["db_path"]).get_connection()
 
     return app
