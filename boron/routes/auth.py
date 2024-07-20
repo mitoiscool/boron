@@ -43,7 +43,7 @@ def login():
     return response
 
 
-@auth.post("logout")
+@auth.route("logout")
 def logout():
     sessionToken = request.cookies["session"]
     if sessionToken is not None:

@@ -1,27 +1,52 @@
 {% extends 'base.html' %}
 {% block head %}
-  <title>{{ context.user }}'s home</title>
+  <title>{{ dev.email }}'s home</title>
 {% endblock %}
 {% block body %}
-  <div class="flex items-center">
-    <img src="avatar.png" alt="user avatar" />
-    <div>
-      <strong>{{ context.email }}</strong>
-      <span>{{ len(app) }} app(s) in use</span>
+  <div class="flex p-4">
+    <div class="rounded-lg border-none bg-stone-700 p-4 flex flex-col justify-between leading-normal">
+      <div class="mb-8">
+        <div class="text-white font-bold text-xl mb-2">{{ dev.email }}'s homepage</div>
+        <p class="text-white text-base">
+          {{ apps|length }} app(s) currently using
+          <strong class="text-purple-500">Boron</strong>
+        </p>
+        <p class="text-white text-base">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.</p>
+      </div>
+      <div class="flex items-center">
+        <img class="w-10 h-10 rounded-full mr-4" src="/img/jonathan.jpg" alt="Avatar" />
+        <div class="text-sm">
+          <p class="text-stone-900 leading-none">Jonathan Reinink</p>
+          <p class="text-stone-600">Aug 18</p>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="grid gap-4 grid-cols-3 grid-rows-3">
-    {% for app in app %}
-      <div class="p-4 bg-teal-900 shadow-lg rounded-lg">
-        <div class="flex">
-          <div>
-            <strong>{{ app.name }}</strong>
-            <span>ID: {{ app.id }}</span>
+  <section>
+    <div class="p-4 mx-auto">
+      <div class="sm:text-lg">
+        <h2 class="mb-4 text-4xl tracking-tight font-bold text-white">Your apps:</h2>
+        {% if app %}
+          <div class="grid gap-4 grid-cols-3 grid-rows-3">
+            {% for app in app %}
+              <div class="p-4 bg-teal-900 shadow-lg rounded-lg">
+                <div class="flex">
+                  <div>
+                    <strong>{{ app.name }}</strong>
+                    <span>ID: {{ app.id }}</span>
+                  </div>
+                </div>
+                <a href="{{ url_for('application.get_app', app.id) }}" class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-full">View</a>
+                <a href="{{ url_for('application.delete_app', app.id) }}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">Delete</a>
+              </div>
+            {% endfor %}
           </div>
-        </div>
-        <a href="{{ url_for('application.get_app', app.id) }}" class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-full">View</a>
-        <a href="{{ url_for('application.delete_app', app.id) }}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">Delete</a>
+        {% else %}
+          <div class="flex justify-center">
+            <p class="text-stone-400">There is no app currently using Boron.</p>
+          </div>
+        {% endif %}
       </div>
-    {% endfor %}
-  </div>
+    </div>
+  </section>
 {% endblock %}
