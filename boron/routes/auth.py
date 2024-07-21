@@ -9,9 +9,8 @@ from flask import (
     make_response,
 )
 from loguru import logger
-from boron.routes.application import application
-from boron.util.authenticator import login as lgn
-from boron.util.authenticator import logout as lgo
+from boron.util.authenticator import login as lgn, logout as lgo, session
+
 
 auth = Blueprint("auth", __name__, url_prefix="/auth/")
 
@@ -31,23 +30,21 @@ def login():
     """
 
     e, p = request.form.get("email"), request.form.get("pass")
-    logger.trace(f"trying to login with email = '{e}', password = '{p}'")
+    logger.trace(
+        f"{request.remote_addr} trying to login with email = '{e}', password = '{p}'"
+    )
     resp = lgn(e, p)
 
     if not resp["success"]:  # there was an error
         return render_template("/auth/login.html", error=resp["message"])
 
-    response = make_response(redirect(url_for("application.applications_home")))
-    response.set_cookie("session", resp["session"])
+    response = make_response(redirect(url_for("application.dev_home")))
+    response.set_cookie("session", resp["session"], max_age=3600)
 
     return response
 
 
 @auth.route("logout")
 def logout():
-    sessionToken = request.cookies["session"]
-    if sessionToken is not None:
-        # invalidate session in the db
-        lgo(sessionToken)
-
-    return make_response(redirect(url_for("auth.login")))
+    lgo(session())
+    return make_response(redirect("/"))
