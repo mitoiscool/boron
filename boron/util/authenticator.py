@@ -1,7 +1,7 @@
 from boron.util.db import query
 import bcrypt
 from boron.util.general import rnd_string
-from flask import abort, Response, request
+from flask import abort, request
 from loguru import logger
 
 
@@ -10,6 +10,15 @@ def session() -> str:
     if s is None:
         abort(401)
     return s
+
+
+def get_dev():
+    res = query(
+        "SELECT * FROM developers WHERE session = :session", {"session": session()}
+    )
+    if len(res) == 1:
+        return res[0]
+    return abort(401)
 
 
 def login(email: str, password: str):
@@ -65,12 +74,23 @@ def create_user(email, password):
     )
 
 
-def logged_in(session: str) -> bool:
-    logger.trace(f"verifying session token '{session}'")
+def logged_in() -> bool:
+    return logged_in(session())
+
+
+def logged_in(*args) -> bool:  # noqa: F811
+    args = [arg for arg in args]
+    assert len(args) < 2
+    s = ""
+    if len(args) == 0:
+        s = session()
+    else:
+        s = args.pop()
+    logger.trace(f"verifying session token '{s}'")
 
     res = query(
         "SELECT email FROM developers WHERE session = :session",
-        {"session": session},
+        {"session": s},
     )
 
     if len(res) == 0:
