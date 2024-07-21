@@ -9,14 +9,14 @@ from flask import (
     current_app,
 )
 from loguru import logger
-from boron.util.authenticator import logged_in, session, get_dev
+from boron.util.authenticator import get_dev
 from boron.util.db import query
 from boron.util.apputil import (
-    owns_app,
     select_app,
     delete_application,
     get_application_users,
-    get_application_keys,
+    get_app_keys,
+    gen_keys,
 )
 
 application = Blueprint("application", __name__, url_prefix="/applications/")
@@ -24,10 +24,6 @@ application = Blueprint("application", __name__, url_prefix="/applications/")
 
 @application.get("home")
 def dev_home():
-    print(request.cookies.get("session"))
-    if not logged_in(session()):
-        return make_response(redirect(url_for("auth.get_login")))
-
     dev = get_dev()
 
     apps = query(
@@ -44,9 +40,7 @@ def create_app():
     Form args:
     appname
     """
-
-    if not logged_in():
-        return make_response(redirect(url_for("auth.get_login")))
+    dev = get_dev()
 
     appName = request.form.get("appname")
     if not appName:
@@ -65,9 +59,6 @@ def create_app():
 # Delete app (post)
 @application.post("<int:appid>/delete")
 def delete_app(appid: int):
-    if not logged_in():
-        return make_response(redirect(url_for("auth.get_login")))
-
     dev = get_dev()
 
     delete_application(dev, appid)
@@ -78,15 +69,9 @@ def delete_app(appid: int):
 # App home page
 @application.get("<int:appid>/view")
 def get_app(appid: int):
-    if not logged_in():
-        return make_response(redirect(url_for("auth.get_login")))
-
     dev = get_dev()
 
-    if not owns_app(dev, appid):
-        return abort(403)
-
-    app = select_app(appid)
+    app = select_app(dev, appid)
 
     return render_template("panel/app/app_home.html", dev=dev, app=app, page=1)
 
@@ -94,15 +79,9 @@ def get_app(appid: int):
 # App users page
 @application.get("<appid>/users/")
 def get_app_user(appid):
-    if not logged_in():
-        return make_response(redirect(url_for("auth.get_login")))
-
     dev = get_dev()
 
-    if not owns_app(dev, appid):
-        return abort(403)
-
-    app = select_app(appid)
+    app = select_app(dev, appid)
 
     return render_template(
         "panel/app/users.html",
@@ -114,21 +93,34 @@ def get_app_user(appid):
 
 
 # App keys page
-@application.get("<appid>/keys/")
+@application.get("<int:appid>/keys/")
 def get_app_key(appid):
-    if not logged_in():
-        return make_response(redirect(url_for("auth.get_login")))
-
     dev = get_dev()
 
-    if not owns_app(dev, appid):
-        return abort(403)
-
-    keys = get_application_keys(dev, appid)
+    keys = get_app_keys(dev, appid)
 
     return render_template(
-        "panel/app/keys.html", dev=dev, keys=keys, page=3, app=select_app(appid)
+        "panel/app/keys.html", dev=dev, keys=keys, page=3, app=select_app(dev, appid)
     )
+
+
+@application.post("<int:appid>/keys")
+def post_app_key(appid):
+    dev = get_dev()
+    form = request.form
+    try:
+        count, length, prefix = (
+            int(form.get("count")),
+            int(form.get("length")),
+            form.get("prefix"),
+        )
+        if not prefix:
+            prefix = "BORON"
+        assert len(prefix) == 5
+    except Exception:
+        return abort(400)
+    gen_keys(dev, appid, count, length, prefix)
+    return redirect(url_for("application.get_app_key", appid=appid))
 
 
 # @application.context_processor

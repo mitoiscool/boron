@@ -1,1 +1,61 @@
 {% extends 'base.html' %}
+{% block head %}
+  <title>Keys - App: {{ app.name }}</title>
+{% endblock %}
+{% block body %}
+  <section>
+    <form action="{{ url_for('application.post_app_key', appid=app.id) }}" method="post">
+      <div class="m-2 grid grid-cols-4 gap-x-6 sm:grid-cols-8 text-white w-fit">
+        <div class="col-span-2">
+          <label for="count-input" class="block text-sm font-medium leading-6">Count</label>
+          <input type="number" name="count" id="count-input" required class="b-input mt-1" value="10" />
+        </div>
+
+        <div class="col-span-2">
+          <label for="length-input" class="block text-sm font-medium leading-6">Length</label>
+          <input type="number" name="length" id="length-input" required class="b-input mt-1" value="10" />
+        </div>
+
+        <div class="col-span-2">
+          <label for="prefix-input" class="block text-sm font-medium leading-6">Prefix</label>
+          <input type="text" name="prefix" id="prefix-input" class="b-input mt-1" minlength="5" maxlength="5" placeholder="BORON" value="{{ (app.name|upper + 'XXXXX')|batch(5)|first|join }}" />
+        </div>
+        <button type="submit" class="b-btn sm:col-span-1 m-2 mt-7 mb-0.5">Generate</button>
+      </div>
+    </form>
+    {% if keys %}
+      <div class="flex fixed flex-col top-16 mt-32 m-2 mb-4 w-auto bottom-16">
+        <div class="flex-grow overflow-auto">
+          <table class="relative w-full">
+            <thead class="bg-stone-900 sticky top-0 rounded-xl">
+              <tr>
+                <th class="px-8 p-1">ID</th>
+                <th class="px-8 p-1">Key</th>
+                <th class="px-8 p-1">Length</th>
+                <th class="px-8 p-1">Creation Date</th>
+                <th class="px-8 p-1">Used</th>
+              </tr>
+            </thead>
+            <tbody class="overflow-scroll h-48 divide-y divide-solid divide-stone-700">
+              {% for key in keys %}
+                <tr>
+                  <td class="px-8">{{ key.id }}</td>
+                  <td class="px-8">
+                    <code>{{ key.name }}</code>
+                  </td>
+                  <td class="px-8">{{ key.length }}</td>
+                  <td class="px-8">{{ key.creation }}</td>
+                  <td class="px-8">{{ key.used }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% else %}
+      <div class="flex justify-center mt-16">
+        <p class="text-stone-400">There is currently no key for application {{ app.name }}.</p>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}

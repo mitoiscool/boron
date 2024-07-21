@@ -1,24 +1,26 @@
 from boron.util.db import query
 import bcrypt
-from boron.util.general import rnd_string
+from boron.util.general import rnd_str
 from flask import abort, request
 from loguru import logger
+from records import Record
 
 
-def session() -> str:
+def get_dev() -> Record:
+    """
+    Try to retrive session from current request and returns coresponding developer.
+    Returns 401 if session is none or invalid.
+    """
     s = request.cookies.get("session")
-    if s is None:
-        abort(401)
-    return s
-
-
-def get_dev():
-    res = query(
-        "SELECT * FROM developers WHERE session = :session", {"session": session()}
-    )
-    if len(res) == 1:
-        return res[0]
-    return abort(401)
+    if not s:
+        return abort(401)
+    res = query("SELECT * FROM developers WHERE session = :session", {"session": s})
+    assert len(res) < 2
+    if len(res) == 0:
+        return abort(401)
+    dev = res[0]
+    logger.trace(f"{request.remote_addr} authorized as '{dev.email}', session = '{s}'")
+    return dev
 
 
 def login(email: str, password: str):
@@ -38,7 +40,7 @@ def login(email: str, password: str):
         return {"success": False, "message": "invalid password"}
 
     # else, create session token and assign it to user in db
-    session = rnd_string(15)
+    session = rnd_str(15)
 
     query(
         "UPDATE developers SET session = :session WHERE email = :email",
@@ -72,28 +74,3 @@ def create_user(email, password):
         "INSERT INTO developers (email, password) VALUES (:email, :pass);",
         {"email": email, "pass": hashedPass},
     )
-
-
-def logged_in() -> bool:
-    return logged_in(session())
-
-
-def logged_in(*args) -> bool:  # noqa: F811
-    args = [arg for arg in args]
-    assert len(args) < 2
-    s = ""
-    if len(args) == 0:
-        s = session()
-    else:
-        s = args.pop()
-    logger.trace(f"verifying session token '{s}'")
-
-    res = query(
-        "SELECT email FROM developers WHERE session = :session",
-        {"session": s},
-    )
-
-    if len(res) == 0:
-        return False  # check if session exists in db
-
-    return True

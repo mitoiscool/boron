@@ -1,12 +1,15 @@
 import random
 import string
 
-def rnd_string(length):
+
+def rnd_str(length: int):
     return "".join(random.choices(string.ascii_letters, k=length))
 
 
-def rnd_stringu(length):
-    return rnd_string(length).upper()
+def rnd_str_u(length: int):
+    return rnd_str(length).upper()
 
-def gen_license():
-    return f"{rnd_stringu(5)}-{rnd_stringu(2)}B0R0N{rnd_stringu(2)}-{rnd_stringu(5)}"
+
+def gen_license(prefix: str = "BORON"):
+    assert len(prefix) == 5
+    return f"{prefix}-{rnd_str_u(4)}-{rnd_str_u(4)}-{rnd_str_u(4)}-{rnd_str_u(4)}"

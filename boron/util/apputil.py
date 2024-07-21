@@ -15,7 +15,9 @@ def owns_app(dev, appid: int) -> bool:
     )
 
 
-def select_app(appid):
+def select_app(dev, appid):
+    if not owns_app(dev, appid):
+        return abort(403)
     res = query(
         "SELECT * FROM applications WHERE id = :id",
         {"id": appid},
@@ -48,7 +50,7 @@ def get_application_users(dev, appid) -> list:
     return [get_application_user(i, appid) for i in userIds]
 
 
-def get_application_keys(dev, appid):
+def get_app_keys(dev, appid):
     if not owns_app(dev, appid):
         return abort(403)
 
@@ -57,20 +59,19 @@ def get_application_keys(dev, appid):
     return keys
 
 
-def generate_app_keys(dev, appid, count, length):
+def gen_keys(dev, appid, count, length, prefix="BORON"):
     if not owns_app(dev, appid):
-        abort(403)
-    keys = []
+        return abort(403)
 
-    for i in range(count):
-        key = gen_license()
-        keys.append(key)
+    key = [gen_license(prefix) for _ in range(count)]
+
+    for k in key:
         query(
-            "INSERT INTO licensekeys (name, length, app_id) VALUES (?, ?, ?)",
-            (key, length, appid),
+            "INSERT INTO licensekeys (name, length, app_id) VALUES (:name, :length, :app_id)",
+            {"name": k, "length": length, "app_id": appid},
         )
 
-    return keys
+    return key
 
 
 def create_application_user(dev, appid, user, password):

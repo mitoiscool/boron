@@ -9,7 +9,7 @@ from flask import (
     make_response,
 )
 from loguru import logger
-from boron.util.authenticator import login as lgn, logout as lgo, session
+from boron.util.authenticator import login as lgn, logout as lgo, get_dev
 
 
 auth = Blueprint("auth", __name__, url_prefix="/auth/")
@@ -46,5 +46,5 @@ def login():
 
 @auth.route("logout")
 def logout():
-    lgo(session())
+    lgo(get_dev().session)
     return make_response(redirect("/"))
