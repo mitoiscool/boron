@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block head %}
+  <title>{{ code }} {{ msg }}</title>
+{% endblock %}
+{% block body %}
+  <div class="flex justify-center text-white">
+    <section>
+      <h1 class="text-4xl font-bold">{{ code }} {{ msg }}</h1>
+      <p class="mt-8">
+        <a href="{% if url is defined %}
+            {{ url }}
+          {% else %}
+            {{ 'https://http.cat/status/%d'|format(code) }}
+          {% endif %}">
+          <img src="https://http.cat/{{ code }}" alt="Fig. http.cat/{{ code }}" />
+        </a>
+      </p>
+    </section>
+  </div>
+{% endblock %}
