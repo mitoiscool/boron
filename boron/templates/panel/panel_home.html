@@ -5,7 +5,7 @@
 {% block body %}
   <div class="flex p-4">
     <div class="rounded-lg border-none bg-stone-700 p-4 flex flex-col justify-between leading-normal">
-      <div class="mb-8">
+      <div class="mb-4">
         <div class="text-white font-bold text-xl mb-2">{{ dev.email }}'s homepage</div>
         <p class="text-white text-base">
           {{ apps|length }} app(s) currently using
@@ -14,9 +14,8 @@
         <p class="text-white text-base">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.</p>
       </div>
       <div class="flex items-center">
-        <img class="w-10 h-10 rounded-full mr-4" src="/img/jonathan.jpg" alt="Avatar" />
         <div class="text-sm">
-          <p class="text-stone-900 leading-none">Jonathan Reinink</p>
+          <p class="text-stone-400 leading-none">Developer ID: {{ dev.id }}</p>
           <p class="text-stone-600">Aug 18</p>
         </div>
       </div>
@@ -25,19 +24,36 @@
   <section>
     <div class="p-4 mx-auto">
       <div class="sm:text-lg">
-        <h2 class="mb-4 text-4xl tracking-tight font-bold text-white">Your apps:</h2>
-        {% if app %}
+        <h2 class="mb-8 text-4xl tracking-tight font-bold text-white">
+          Your apps
+          <button type="button" class="bg-none align-bottom" onclick="create_app_dialog()">
+            <svg width="48px" height="48px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g stroke-width="0" transform="translate(6,6), scale(0.5)">
+                <rect x="-2.4" y="-2.4" width="28.80" height="28.80" rx="14.4" fill="#ffffff" strokewidth="0" style="--darkreader-inline-fill: #181a1b;" data-darkreader-inline-fill="" />
+              </g>
+              <g>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM12.75 9C12.75 8.58579 12.4142 8.25 12 8.25C11.5858 8.25 11.25 8.58579 11.25 9L11.25 11.25H9C8.58579 11.25 8.25 11.5858 8.25 12C8.25 12.4142 8.58579 12.75 9 12.75H11.25V15C11.25 15.4142 11.5858 15.75 12 15.75C12.4142 15.75 12.75 15.4142 12.75 15L12.75 12.75H15C15.4142 12.75 15.75 12.4142 15.75 12C15.75 11.5858 15.4142 11.25 15 11.25H12.75V9Z" fill="#9333ea" style="--darkreader-inline-fill: #6111a9;" data-darkreader-inline-fill="" />
+              </g>
+            </svg>
+          </button>
+        </h2>
+        {% if apps %}
           <div class="grid gap-4 grid-cols-3 grid-rows-3">
-            {% for app in app %}
-              <div class="p-4 bg-teal-900 shadow-lg rounded-lg">
-                <div class="flex">
-                  <div>
-                    <strong>{{ app.name }}</strong>
-                    <span>ID: {{ app.id }}</span>
-                  </div>
+            {% for app in apps %}
+              <div class="p-4 bg-stone-700 text-white shadow-lg rounded-lg">
+                <div class="flex m-2">
+                  <section>
+                    <h3 class="text-2xl tracking-tight font-bold">
+                      {{ app.name }}
+                      <span class="text-sm font-normal">ID: {{ app.id }}</span>
+                    </h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                  </section>
                 </div>
-                <a href="{{ url_for('application.get_app', app.id) }}" class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-full">View</a>
-                <a href="{{ url_for('application.delete_app', app.id) }}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">Delete</a>
+                <div class="sm:flex sm:flex-row-reverse">
+                  <a href="{{ url_for('application.delete_app', appid=app.id) }}" class="mx-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">Delete</a>
+                  <a href="{{ url_for('application.get_app', appid=app.id) }}" class="mx-2 bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-full">View</a>
+                </div>
               </div>
             {% endfor %}
           </div>
@@ -49,4 +65,68 @@
       </div>
     </div>
   </section>
+
+  <form action="{{ url_for('application.create_app') }}" method="post">
+    <div id="create-app" class="hidden relative z-10 text-white" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <!--                                        
+      Entering: "ease-out duration-300"
+        From: "opacity-0"
+        To: "opacity-100"
+      Leaving: "ease-in duration-200"
+        From: "opacity-100"
+        To: "opacity-0"
+                                            -->
+      <div class="fixed inset-0 bg-stone-800 backdrop-blur bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+      <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+          <!--                                                 
+          Modal panel, show/hide based on modal state.
+  
+          Entering: "ease-out duration-300"
+            From: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            To: "opacity-100 translate-y-0 sm:scale-100"
+          Leaving: "ease-in duration-200"
+            From: "opacity-100 translate-y-0 sm:scale-100"
+            To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                                         -->
+          <div class="relative transform overflow-hidden rounded-lg bg-stone-600 text-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+            <div class="bg-stone-600 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+              <div class="sm:flex sm:items-start">
+                <div class="mx-auto flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-none sm:mx-0 sm:h-10 sm:w-10">
+                  <img class="h-8 w-auto" src="{{ url_for('static', filename='boron.svg') }}" alt="Fig. Boron" />
+                </div>
+                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                  <h3 class="text-base font-semibold leading-6" id="modal-title">Create application</h3>
+                  <div class="mt-2">
+                    <div class="m-2 w-72">
+                      <div class="relative w-full min-w-[200px] h-10">
+                        <input name="appname" required type="text" id="appname-input" class="b-input" placeholder="Enter name of your application" />
+                      </div>
+                    </div>
+                    <p class="text-sm">Lorem ipsum is some dummy text.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-stone-800 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+              <button type="submit" class="inline-flex w-full justify-center rounded-lg b-accent px-3 py-2 text-sm font-semibold shadow-sm hover:bg-purple-500 sm:ml-3 sm:w-auto">Create</button>
+              <button type="button" onclick="create_app_dialog(false)" class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <script>
+    create_app_dialog = (open = true) => {
+      if (open) {
+        obj = document.querySelector('#create-app')
+        obj.classList.remove('hidden')
+      } else {
+        obj = document.querySelector('#create-app')
+        obj.classList.add('hidden')
+      }
+    }
+  </script>
 {% endblock %}

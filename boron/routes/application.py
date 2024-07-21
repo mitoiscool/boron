@@ -60,12 +60,12 @@ def create_app():
 
 
 # Delete app (post)
-@application.post("<appid>/delete")
+@application.route("<appid>/delete")
 def delete_app(appid):
-    if not logged_in(request):
+    if not logged_in(session()):
         return make_response(redirect(url_for("auth.get_login")))
 
-    dev = get_developer(request.cookies.get["session"])
+    dev = get_developer(request.cookies.get("session"))
 
     delete_application(dev, appid)
 

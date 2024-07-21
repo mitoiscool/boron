@@ -1,0 +1,49 @@
+.b-accent {
+    --tw-bg-opacity: 1;
+    background-color: rgb(147 51 234 / var(--tw-bg-opacity))
+        /* #9333ea */
+    ;
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity))
+        /* #ffffff */
+    ;
+}
+
+.t-accent {
+    --tw-text-opacity: 1;
+    color: rgb(168 85 247 / var(--tw-text-opacity))
+        /* #a855f7 */
+    ;
+}
+
+.b-input {
+    border-style: none;
+    border-radius: 0.5rem;
+    --tw-bg-opacity: 1;
+    background-color: rgb(68 64 60 / var(--tw-bg-opacity))
+        /* #44403c */
+    ;
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity))
+        /* #ffffff */
+    ;
+    padding: 0.625rem
+        /* 10px */
+    ;
+    font-size: 0.875rem
+        /* 14px */
+    ;
+    line-height: 1.25rem
+        /* 20px */
+    ;
+    display: block;
+    width: 100%;
+
+}
+
+.b-input::placeholder {
+    --tw-placeholder-opacity: 1;
+    color: rgb(168 162 158 / var(--tw-placeholder-opacity))
+        /* #a8a29e */
+    ;
+}

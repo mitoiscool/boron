@@ -2,3 +2,5 @@
 **__pycache__
 .DS_STORE
 node_modules
+boron.db
+boron.db-journal
