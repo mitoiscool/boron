@@ -21,6 +21,6 @@ def create_app():
     app.register_blueprint(api)
 
     app.cfg = json.load(open("config.json"))
-    app.db = Database(app.cfg["db_path"], isolation_level=None).get_connection()
+    app.db = Database(app.cfg["db_path"], isolation_level="AUTOCOMMIT").get_connection()
 
     return app
