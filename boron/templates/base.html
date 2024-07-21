@@ -11,43 +11,19 @@
     {% endblock %}
   </head>
 
-  <body>
+  <body class="select-none">
+    <!-- Navbar -->
     {% if dev is defined %}
       <nav>
         <div class="mx-auto px-2 sm:px-6 lg:px-8">
           <div class="relative flex h-16 items-center justify-between">
-            <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
-              <!-- Mobile menu button -->
-              <button type="button" class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-stone-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
-                <span class="absolute -inset-0.5"></span>
-                <span class="sr-only">Open main menu</span>
-                <!--       
-                Icon when menu is closed.
-    
-                Menu open: "hidden", Menu closed: "block"
-                     -->
-                <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
-                <!--       
-                Icon when menu is open.
-    
-                Menu open: "block", Menu closed: "hidden"
-                     -->
-                <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
             <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-              <div class="flex flex-shrink-0 items-center">
-                <img class="h-8 w-auto" src="{{ url_for('static', filename='boron.svg') }}" alt="Fig. Boron" />
-              </div>
+              <a href="/" class="flex flex-shrink-0 items-center"><img class="h-8 w-auto" src="{{ url_for('static', filename='boron.svg') }}" alt="Fig. Boron" /></a>
               <div class="hidden sm:ml-6 sm:block">
                 <div class="flex space-x-4">
                   <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-stone-600 hover:text-white" -->
-                  <a href="#" class="rounded-md bg-stone-900 px-3 py-2 text-sm font-medium text-white" aria-current="page">Dashboard</a>
-                  <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-stone-600 hover:text-white">Team</a>
+                  <a href="{{ url_for('application.dev_home') }}" class="rounded-md bg-stone-900 px-3 py-2 text-sm font-medium text-white" aria-current="page">Dashboard</a>
+                  <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-stone-600 hover:text-white">Applications</a>
                   <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-stone-600 hover:text-white">Projects</a>
                   <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-stone-600 hover:text-white">Calendar</a>
                 </div>
@@ -59,7 +35,7 @@
                 <div>
                   <button id="user-dropdown-btn" type="button" onclick="click_user_dropdown()" class="relative flex rounded-full bg-stone-600 text-sm" aria-expanded="false" aria-haspopup="true">
                     <svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="12" cy="8" r="4" fill="#292524" />
+                      <circle cx="12" cy="8" r="4" fill="#44403c" />
                       <path fill-rule="evenodd" clip-rule="evenodd" d="M12 13C8.33033 13 5.32016 15.4204 5.02395 18.5004C4.99752 18.7753 5.22389 19 5.50003 19H18.5C18.7762 19 19.0025 18.7753 18.9761 18.5004C18.6799 15.4204 15.6697 13 12 13Z" fill="#9333ea" />
                     </svg>
                   </button>
@@ -76,17 +52,6 @@
                     }
                   </script>
                 </div>
-
-                <!--       
-                Dropdown menu, show/hide based on menu state.
-    
-                Entering: "transition ease-out duration-100"
-                  From: "transform opacity-0 scale-95"
-                  To: "transform opacity-100 scale-100"
-                Leaving: "transition ease-in duration-75"
-                  From: "transform opacity-100 scale-100"
-                  To: "transform opacity-0 scale-95"
-                     -->
                 <div id="user-dropdown" class="hidden absolute right-0 z-10 m-4 w-48 origin-top-right rounded-md bg-stone-200 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
                   <!-- Active: "bg-gray-100", Not Active: "" -->
                   <a href="#" class="mx-1 block rounded-lg px-4 py-2 text-sm text-stone-800 hover:bg-stone-600 hover:text-white" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
@@ -97,21 +62,59 @@
             </div>
           </div>
         </div>
-
-        <!-- Mobile menu, show/hide based on menu state. -->
-        <div class="sm:hidden" id="mobile-menu">
-          <div class="space-y-1 px-2 pb-3 pt-2">
-            <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-stone-600 hover:text-white" -->
-            <a href="#" class="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white" aria-current="page">Dashboard</a>
-            <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-stone-600 hover:text-white">Team</a>
-            <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-stone-600 hover:text-white">Projects</a>
-            <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-stone-600 hover:text-white">Calendar</a>
-          </div>
-        </div>
       </nav>
     {% endif %}
-    {% block body %}
 
-    {% endblock %}
+    <!-- Sidebar -->
+    {% if app is defined %}
+      <hr class="flex h-1 rounded-full border-none bg-stone-700" />
+      <!-- Sidebar -->
+      <aside class="flex fixed top-16 mt-8 m-4 left-0 z-40 w-auto bottom-16" aria-label="Sidebar">
+        <div class="rounded-lg h-full px-3 py-4 overflow-y-auto bg-stone-700">
+          <ul class="space-y-2 font-medium text-white">
+            <li>
+              <a href="#" class="flex items-center p-2 rounded-lg hover:bg-stone-600">
+                <svg class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
+                  <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
+                  <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z" />
+                </svg>
+                <span class="ms-3">App Home</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center p-2 rounded-lg hover:bg-stone-600">
+                <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
+                  <path d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z" />
+                </svg>
+                <span class="flex-1 ms-3 whitespace-nowrap">Keys</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center p-2 rounded-lg hover:bg-stone-600">
+                <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="m17.418 3.623-.018-.008a6.713 6.713 0 0 0-2.4-.569V2h1a1 1 0 1 0 0-2h-2a1 1 0 0 0-1 1v2H9.89A6.977 6.977 0 0 1 12 8v5h-2V8A5 5 0 1 0 0 8v6a1 1 0 0 0 1 1h8v4a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-4h6a1 1 0 0 0 1-1V8a5 5 0 0 0-2.582-4.377ZM6 12H4a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2Z" />
+                </svg>
+                <span class="flex-1 ms-3 whitespace-nowrap">Users</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </aside>
+      <style>
+        .body {
+          position: fixed;
+          margin: 1rem;
+          left: 12rem;
+          top: 4rem;
+          margin-top: 2rem;
+        }
+      </style>
+    {% endif %}
+
+    <div class="body text-white select-text">
+      {% block body %}
+
+      {% endblock %}
+    </div>
   </body>
 </html>
