@@ -1,6 +1,6 @@
 from flask import Flask
 from records import Database
-import json
+import tomllib
 from loguru import logger
 from sys import stdout
 
@@ -15,12 +15,14 @@ def create_app():
     from boron.routes.auth import auth
     from boron.routes.application import application
     from boron.routes.api import api
+    from boron.routes.root import root
 
     app.register_blueprint(auth)
     app.register_blueprint(application)
     app.register_blueprint(api)
+    app.register_blueprint(root)
 
-    app.cfg = json.load(open("config.json"))
-    app.db = Database(app.cfg["db_path"], isolation_level="AUTOCOMMIT").get_connection()
+    app.cfg = tomllib.load(open("config.toml", "rb"))
+    app.db = Database(app.cfg["db-url"], isolation_level="AUTOCOMMIT").get_connection()
 
     return app
