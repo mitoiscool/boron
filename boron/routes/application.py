@@ -7,7 +7,7 @@ from flask import (
     url_for,
     make_response,
 )
-from boron.util.authenticator import logged_in
+from boron.util.authenticator import logged_in, session
 from boron.util.db import query
 from boron.util.general import get_developer
 from boron.util.apputil import (
@@ -22,9 +22,7 @@ application = Blueprint("application", __name__, url_prefix="/applications/")
 
 @application.get("home")
 def applications_home():
-    session = request.cookies.get("session")
-
-    if not logged_in(session):
+    if not logged_in(session()):
         return make_response(redirect(url_for("auth.get_login")))
 
     dev = get_developer(request.cookies.get("session"))
@@ -44,16 +42,19 @@ def create_app():
     appname
     """
 
-    if not logged_in(request):
+    if not logged_in(session()):
         return make_response(redirect(url_for("auth.get_login")))
 
     appName = request.form.get("appname")
     if not appName:
-        abort(422)  # unprocessable request
+        abort(400)
 
-    dev = get_developer(request.cookies.get["session"])
+    dev = get_developer(request.cookies.get("session"))
 
-    query("INSERT INTO applications (dev_id, name) VALUES (?, ?)", (dev.id, appName))
+    query(
+        "INSERT INTO applications (dev_id, name) VALUES (:dev_id, :name)",
+        {"dev_id": dev.id, "name": appName},
+    )
 
     return make_response(redirect(url_for("application.applications_home")))
 

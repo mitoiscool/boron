@@ -1,16 +1,28 @@
 from boron.util.db import query
 import bcrypt
 from boron.util.general import rnd_string
-from flask import abort, Response
+from flask import abort, Response, request
 from loguru import logger
 
 
-def login(email: str, password: str):
-    realPass = query(
-        "SELECT password FROM developers WHERE email = :email;", {"email": email}
-    )[0].password
+def session() -> str:
+    s = request.cookies.get("session")
+    if s is None:
+        abort(401)
+    return s
 
-    if not realPass:  #  this may not work due to rows being returned
+
+def login(email: str, password: str):
+    pswd = query(
+        "SELECT password FROM developers WHERE email = :email;", {"email": email}
+    )
+
+    try:
+        realPass = pswd[0].password
+    except IndexError:
+        realPass = None
+
+    if realPass is None:  #  this may not work due to rows being returned
         return {"success": False, "message": "user does not exist"}
 
     if not bcrypt.checkpw(password.encode("utf-8"), realPass):  #  invalid password
@@ -22,9 +34,7 @@ def login(email: str, password: str):
     query(
         "UPDATE developers SET session = :session WHERE email = :email",
         {"session": session, "email": email},
-    ).all()
-
-    query("SELECT * FROM developers").all()
+    )
 
     logger.info(f"'{email}' successfully logged in, session = '{session}'")
 
@@ -38,7 +48,7 @@ def logout(session):
     query(
         "UPDATE developers SET session = NULL WHERE session = :session",
         {"session": session},
-    ).all()
+    )
 
 
 # used only for creating dev accounts, not for production!
@@ -55,7 +65,7 @@ def create_user(email, password):
     )
 
 
-def logged_in(session) -> bool:
+def logged_in(session: str) -> bool:
     logger.trace(f"verifying session token '{session}'")
 
     res = query(
