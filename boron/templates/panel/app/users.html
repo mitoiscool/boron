@@ -3,16 +3,16 @@
   <title>Users - App: {{ app.name }}</title>
 {% endblock %}
 {% block body %}
-  <section>
-    {% if keys %}
-      <div class="flex fixed flex-col top-16 mt-32 m-2 mb-4 w-auto bottom-16">
+  <section class="flex fixed flex-col top-24 m-2 mb-4 w-auto bottom-16">
+    {% if users %}
+      <div class="">
         <div class="flex-grow overflow-auto">
           <table class="relative w-full">
             <thead class="bg-stone-900 sticky top-0 rounded-xl">
               <tr>
                 <th class="px-8 p-1">ID</th>
                 <th class="px-8 p-1">Username</th>
-                <th class="px-8 p-1">Password</th>
+                <th class="px-8 p-1">Expiration Date</th>
               </tr>
             </thead>
             <tbody class="overflow-scroll h-48 divide-y divide-solid divide-stone-700">
@@ -20,7 +20,7 @@
                 <tr>
                   <td class="px-8">{{ user.id }}</td>
                   <td class="px-8">{{ user.username }}</td>
-                  <td class="px-8">{{ user.password }}</td>
+                  <td class="px-8">{{ user.expiration }}</td>
                 </tr>
               {% endfor %}
             </tbody>
