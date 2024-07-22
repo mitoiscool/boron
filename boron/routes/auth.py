@@ -1,11 +1,9 @@
 from flask import (
     Blueprint,
-    abort,
     render_template,
     request,
     redirect,
     url_for,
-    current_app,
     make_response,
 )
 from loguru import logger
@@ -30,9 +28,7 @@ def login():
     """
 
     e, p = request.form.get("email"), request.form.get("pass")
-    logger.trace(
-        f"{request.remote_addr} trying to login with email = '{e}', password = '{p}'"
-    )
+    logger.trace(f"{request.remote_addr} trying to login {e} with password = '{p}'")
     resp = lgn(e, p)
 
     if not resp["success"]:  # there was an error
@@ -46,5 +42,7 @@ def login():
 
 @auth.route("logout")
 def logout():
-    lgo(get_dev().session)
+    dev = get_dev()
+    logger.info(f"{dev.email} logged out session {dev.session}")
+    lgo(dev.session)
     return make_response(redirect("/"))

@@ -1,1 +1,2 @@
 db-url = "sqlite:///boron.db"
+log-level = "TRACE"

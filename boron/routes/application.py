@@ -6,7 +6,6 @@ from flask import (
     redirect,
     url_for,
     make_response,
-    current_app,
 )
 from loguru import logger
 from boron.util.authenticator import get_dev
@@ -51,7 +50,7 @@ def create_app():
         {"dev_id": dev.id, "name": appName},
     )
 
-    logger.info(f"{dev.email} created app{{name:'{appName}'}}")
+    logger.info(f"{dev.email} created app '{appName}'")
 
     return make_response(redirect(url_for("application.dev_home")))
 
