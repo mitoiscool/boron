@@ -52,6 +52,7 @@ def get_app_users(dev, appid) -> list:
     )
     return users
 
+
 def get_app_keys(dev, appid):
     if not owns_app(dev, appid):
         return abort(403)
@@ -77,26 +78,39 @@ def gen_keys(dev, appid, count, length, prefix="BORON"):
 
     return key
 
+
 def get_securedata(dev, appid):
     if not owns_app(dev, appid):
         return abort(403)
-    
-    return query("SELECT * FROM data WHERE app_id = :appid;", {"appid": appid})
+
+    return query("SELECT * FROM secured_data WHERE app_id = :appid;", {"appid": appid})
+
 
 def edit_securedata(id, key, value, dev, appid):
     if not owns_app(dev, appid):
         return abort(403)
-    
-    query("UPDATE data SET keyname = :key, keyvalue = :value WHERE id = :id AND app_id = :appid;", {"key": key, "value": value, "id": id, "appid": appid})
+
+    query(
+        "UPDATE secured_data SET keyname = :key, keyvalue = :value WHERE id = :id AND app_id = :appid;",
+        {"key": key, "value": value, "id": id, "appid": appid},
+    )
+
 
 def create_securedata(key, dev, appid):
     if not owns_app(dev, appid):
         return abort(403)
-    
-    query("INSERT INTO data (keyname, app_id) VALUES (:keyname, :appid);", {"keyname": key, "appid": appid})
+
+    query(
+        "INSERT INTO secured_data (keyname, app_id) VALUES (:keyname, :appid);",
+        {"keyname": key, "appid": appid},
+    )
+
 
 def delete_securedata(id, dev, appid):
     if not owns_app(dev, appid):
         return abort(403)
-    
-    query("DELETE FROM data WHERE id = :id AND app_id = :appid", {"id": id, "appid": appid})
+
+    query(
+        "DELETE FROM secured_data WHERE id = :id AND app_id = :appid",
+        {"id": id, "appid": appid},
+    )
