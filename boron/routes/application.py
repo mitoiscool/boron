@@ -159,7 +159,7 @@ def create_data(appid):
 
     create_securedata(keyname, get_dev(), appid)
 
-    return make_response(redirect(url_for("application.get_data", appid)))
+    return make_response(redirect(url_for("application.get_data", appid=appid)))
 
 
 @application.post("<int:appid>/data/edit")
@@ -170,7 +170,7 @@ def edit_data(appid):
 
     edit_securedata(keyid, keyname, keyvalue, get_dev(), appid)
 
-    return make_response(redirect(url_for("application.get_data", appid)))
+    return make_response(redirect(url_for("application.get_data", appid=appid)))
 
 
 @application.post("<int:appid>/data/delete")
@@ -179,7 +179,7 @@ def delete_data(appid):
 
     delete_securedata(keyid, get_dev(), appid)
 
-    return make_response(redirect(url_for("application.get_data", appid)))
+    return make_response(redirect(url_for("application.get_data", appid=appid)))
 
 
 # @application.context_processor
