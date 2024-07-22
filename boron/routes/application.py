@@ -72,7 +72,9 @@ def get_app(appid: int):
 
     app = select_app(dev, appid)
 
-    return render_template("panel/app/app_home.html", dev=dev, app=app, page=1)
+    return render_template(
+        "panel/app/app_home.html", dev=dev, app=app, navbar="app", sidebar="home"
+    )
 
 
 # App users page
@@ -87,6 +89,7 @@ def get_app_user(appid):
         dev=dev,
         app=app,
         users=get_application_users(dev, appid),
+        navbar="app",
         sidebar="user",
     )
 
@@ -99,7 +102,12 @@ def get_app_key(appid):
     keys = get_app_keys(dev, appid)
 
     return render_template(
-        "panel/app/keys.html", dev=dev, keys=keys, page=3, app=select_app(dev, appid)
+        "panel/app/keys.html",
+        dev=dev,
+        keys=keys,
+        app=select_app(dev, appid),
+        navbar="app",
+        sidebar="key",
     )
 
 
