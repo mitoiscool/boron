@@ -52,7 +52,6 @@ def get_app_users(dev, appid) -> list:
     )
     return users
 
-
 def get_app_keys(dev, appid):
     if not owns_app(dev, appid):
         return abort(403)
