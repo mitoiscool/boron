@@ -15,3 +15,8 @@ def query_it(query: str, args: dict = {}):
     """
     logger.trace(f"database: query = '{query}', args = {args}")
     return current_app.db.query(query, **args)
+
+def record_exists(quer: str, args: dict = {}):
+    q = query(quer, args)
+
+    return q != None and len(q) > 0
