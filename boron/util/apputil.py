@@ -42,17 +42,15 @@ def get_user(user_id: int):
     return query("SELECT * FROM users WHERE id = :id", {"id": user_id})
 
 
-def get_application_users(dev, appid) -> list:
+def get_app_users(dev, appid) -> list:
     if not owns_app(dev, appid):
         return abort(403)
-
     # query the app-users map to find all uids for this app, then return a list from the raw users table based on uids
-
-    userIds = query(
-        "SELECT user_id FROM app_user WHERE app_id = :app_id", {"app_id": appid}
+    users = query(
+        "SELECT user_id as id, username, expiration FROM app_user JOIN users WHERE app_user.app_id = :app_id AND users.id = app_user.user_id",
+        {"app_id": appid},
     )
-
-    return [get_user(i, appid) for i in userIds]
+    return users
 
 
 def get_app_keys(dev, appid):

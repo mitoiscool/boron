@@ -13,7 +13,7 @@ from boron.util.db import query
 from boron.util.apputil import (
     select_app,
     delete_application,
-    get_application_users,
+    get_app_users,
     get_app_keys,
     gen_keys,
 )
@@ -88,7 +88,7 @@ def get_app_user(appid):
         "panel/app/users.html",
         dev=dev,
         app=app,
-        users=get_application_users(dev, appid),
+        users=get_app_users(dev, appid),
         navbar="app",
         sidebar="user",
     )
