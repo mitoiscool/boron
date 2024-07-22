@@ -30,6 +30,8 @@ def select_app(dev, appid):
 def delete_application(dev, appid: int):
     logger.info(f"deleting app{{id:{appid}}} as requested by {dev.email}")
     # we should probably also delete from license keys/users
+    query("DELETE FROM app_user WHERE app_id = :app_id", {"app_id": appid})
+    query("DELETE FROM licensekeys WHERE app_id = :app_id", {"app_id": appid})
     return query(
         "DELETE FROM applications WHERE dev_id = :dev_id AND id = :id",
         {"dev_id": dev.id, "id": appid},
