@@ -130,7 +130,7 @@ def edit_securedata(id, key, value, dev, appid):
     ensure_owns_app(dev, appid)
 
     query(
-        "UPDATE secured_data SET keyname = :key, keyvalue = :value WHERE id = :id AND app_id = :appid;",
+        "UPDATE secured_data SET key = :key, value = :value WHERE id = :id AND app_id = :appid;",
         {"key": key, "value": value, "id": id, "appid": appid},
     )
 
@@ -139,8 +139,8 @@ def create_securedata(key, dev, appid):
     ensure_owns_app(dev, appid)
 
     query(
-        "INSERT INTO secured_data (keyname, app_id) VALUES (:keyname, :appid);",
-        {"keyname": key, "appid": appid},
+        "INSERT INTO secured_data (key, app_id) VALUES (:key, :appid);",
+        {"key": key, "appid": appid},
     )
 
 
