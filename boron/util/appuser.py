@@ -1,4 +1,5 @@
 from boron.util.db import query, record_exists
+from boron.util.general import rnd_str
 from datetime import datetime, timedelta
 import bcrypt
 
@@ -17,7 +18,7 @@ def redeem_key(userid, license, appid):
     expiration_date = current_date + timedelta(days=licenseKey.length)
 
     # set key to used
-    query("UPDATE licensekeys SET used = '1' WHERE name = :license;", {"license": license})
+    query("UPDATE licensekeys SET used = '1' WHERE name = :license AND app_id = :appid;", {"license": license, "appid": appid})
 
     # apply user to application
     query(
@@ -34,7 +35,7 @@ def create(username, password, license, appid):
     
     # should check if user already exists
 
-    if record_exists("SELECT id FROM users WHERE username = :username;", {"username": username, "appid": appid}):
+    if record_exists("SELECT id FROM users WHERE username = :username AND app_id = :appid;", {"username": username, "appid": appid}):
         return {"success": False, "message": "User already exists."}
 
     hashedPass = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
@@ -45,7 +46,7 @@ def create(username, password, license, appid):
 
     # get user id then redeem key
 
-    user_id = query("SELECT id FROM users WHERE username = :uname;", {"uname": username})[0].id
+    user_id = query("SELECT id FROM users WHERE username = :uname AND app_id = :appid;", {"uname": username, "appid": appid})[0].id
 
     redeemResp = redeem_key(user_id, license, appid)
     
@@ -56,9 +57,32 @@ def create(username, password, license, appid):
 
 def login(username, password, appid):
 
-    if not record_exists("SELECT id FROM users WHERE username = :username AND appid = :appid;", {"username": username, "appid": appid}):
+    if not record_exists("SELECT id FROM users WHERE username = :username AND appid = :app_id;", {"username": username, "appid": appid}):
         return {"success": False, "message": "User does not exist."}
     
     # compare password
 
-    realPass = query("SELECT password FROM users WHERE username = :p")
+    realPass = query("SELECT password FROM users WHERE username = :username AND app_id = :appid;", {"username": username, "appid": appid})
+
+    if not bcrypt.checkpw(password.encode("utf-8"), realPass):  #  invalid password
+        return {"success": False, "message": "Your password is incorrect"}
+    
+    session = rnd_str(15)
+
+    query(
+        "UPDATE users SET session = :session WHERE username = :username AND app_id = :appid;",
+        {"session": session, "username": username, "appid": appid},
+    )
+
+    return {
+        "success": True,
+        "session": session,
+    }  # return session for further manipulation
+
+def logout(session, appid):
+    if not record_exists("SELECT id FROM users WHERE session = :sess AND appid = :app_id;", {"sess": session, "appid": appid}):
+        return {"success": False, "message": "Session does not exist"}
+    
+    query("UPDATE users SET session = '' WHERE session = :sess AND app_id = :appid", {"sess": session, "appid": appid})
+
+    return {"success": True}

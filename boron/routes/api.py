@@ -8,7 +8,7 @@ from flask import (
 )
 from boron.util.general import gen_license
 from boron.util.db import query
-from boron.util.appuser import create, login
+from boron.util.appuser import create, login, logout
 from datetime import datetime, timedelta
 
 
@@ -55,7 +55,21 @@ def login_user():
 
     return login(formUsername, formPassword, formAppId)
 
+@api.post("client/logout")
+def login_user():
+    """Logout
+    
+    args:
+    session
+    appid
 
+    """
+
+    formSess = request.form.get('session')
+
+    formAppId = request.form.get('app_id')
+
+    return logout(formSess, formAppId)
 
 @api.post("client/redeem")
 def redeem_user():
