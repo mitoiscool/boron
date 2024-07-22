@@ -20,6 +20,7 @@ from boron.util.apputil import (
     edit_securedata,
     create_securedata,
     delete_securedata,
+    get_app_stat,
 )
 
 application = Blueprint("application", __name__, url_prefix="/applications/")
@@ -77,7 +78,12 @@ def get_app(appid: int):
     app = select_app(dev, appid)
 
     return render_template(
-        "panel/app/app_home.html", dev=dev, app=app, navbar="app", sidebar="home"
+        "panel/app/app_home.html",
+        dev=dev,
+        app=app,
+        stat=get_app_stat(dev, appid),
+        navbar="app",
+        sidebar="home",
     )
 
 
