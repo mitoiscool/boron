@@ -19,7 +19,7 @@ from boron.util.apputil import (
     get_securedata,
     edit_securedata,
     create_securedata,
-    delete_securedata
+    delete_securedata,
 )
 
 application = Blueprint("application", __name__, url_prefix="/applications/")
@@ -133,34 +133,43 @@ def post_app_key(appid):
     gen_keys(dev, appid, count, length, prefix)
     return redirect(url_for("application.get_app_key", appid=appid))
 
+
 @application.get("<int:appid>/data")
 def get_data(appid):
-    return render_template("panel/app/data.html", get_securedata(get_dev(), appid))
+    dev = get_dev()
+    return render_template(
+        "panel/app/data.html",
+        dev=dev,
+        app=select_app(dev, appid),
+        data=get_securedata(dev, appid),
+        navbar="app",
+        sidebar="data",
+    )
+
 
 @application.post("<int:appid>/data/create")
 def create_data(appid):
-
-    keyname = request.form.get('key')
+    keyname = request.form.get("key")
 
     create_securedata(keyname, get_dev(), appid)
 
     return make_response(redirect(url_for("application.get_data", appid)))
 
+
 @application.post("<int:appid>/data/edit")
 def edit_data(appid):
-
-    keyid = request.form.get('id')
-    keyname = request.form.get('key')
-    keyvalue = request.form.get('value')
+    keyid = request.form.get("id")
+    keyname = request.form.get("key")
+    keyvalue = request.form.get("value")
 
     edit_securedata(keyid, keyname, keyvalue, get_dev(), appid)
 
     return make_response(redirect(url_for("application.get_data", appid)))
 
+
 @application.post("<int:appid>/data/delete")
 def delete_data(appid):
-
-    keyid = request.form.get('id')
+    keyid = request.form.get("id")
 
     delete_securedata(keyid, get_dev(), appid)
 
