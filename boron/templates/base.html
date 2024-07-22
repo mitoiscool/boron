@@ -60,27 +60,49 @@
           <ul class="space-y-2 font-medium text-white">
             <li>
               <a href="{{ url_for('application.get_app', appid=app.id) }}" class="flex items-center p-2 rounded-lg hover:bg-stone-600 {% if sidebar == 'home' %}bg-stone-800{% endif %}">
-                <svg class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
-                  <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
-                  <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z" />
+                <svg width="24px" height="24px" viewBox="0 -0.5 17 17">
+                  <g id="SVGRepo_iconCarrier">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" style="--darkreader-inline-stroke: none;" data-darkreader-inline-stroke="">
+                      <g transform="translate(1.000000, 1.000000)" fill="#a8a29e" style="--darkreader-inline-fill: #323739;" data-darkreader-inline-fill="">
+                        <path d="M15.794,7.77 L11.984,3.864 L11.9839997,1.01706251 L11.0159997,1.03906251 L11.016,2.767 L8.502,0.245 C8.224,-0.031 7.776,-0.031 7.499,0.245 L0.206,7.771 C-0.069,8.048 -0.068,8.498 0.206,8.773 C0.482,9.049 0.933,9.049 1.209,8.772 L8,1.982 L14.793,8.772 C14.931,8.91 15.111,8.98 15.293,8.98 C15.474,8.98 15.654,8.912 15.794,8.773 C16.068,8.496 16.068,8.045 15.794,7.77 L15.794,7.77 Z" class="si-glyph-fill"></path> <path d="M3.043,8.532 L3.043,14.222 C3.043,14.616 3.26102394,15.0078125 3.61002394,15.0078125 L5.88702394,15.0078125 L5.95099996,11.0147705 L10.0249632,11.0147705 L10.0230128,15.0078125 L12.3260496,15.0078125 C12.6750496,15.0078125 12.958,14.617 12.958,14.222 L12.958,8.531 L8,3.625 L3.043,8.532 L3.043,8.532 Z" class="si-glyph-fill"></path>
+                      </g>
+                    </g>
+                  </g>
                 </svg>
                 <span class="ms-3">App Home</span>
               </a>
             </li>
             <li>
               <a href="{{ url_for('application.get_app_user', appid=app.id) }}" class="flex items-center p-2 rounded-lg hover:bg-stone-600 {% if sidebar == 'user' %}bg-stone-800{% endif %}">
-                <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
-                  <path d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z" />
+                <svg width="24px" height="24px" viewBox="0 0 24 24">
+                  <g>
+                    <path d="M1.5 6.5C1.5 3.46243 3.96243 1 7 1C10.0376 1 12.5 3.46243 12.5 6.5C12.5 9.53757 10.0376 12 7 12C3.96243 12 1.5 9.53757 1.5 6.5Z" fill="#a8a29e" style="--darkreader-inline-fill: #4c5255;" data-darkreader-inline-fill=""></path>
+                    <path d="M14.4999 6.5C14.4999 8.00034 14.0593 9.39779 13.3005 10.57C14.2774 11.4585 15.5754 12 16.9999 12C20.0375 12 22.4999 9.53757 22.4999 6.5C22.4999 3.46243 20.0375 1 16.9999 1C15.5754 1 14.2774 1.54153 13.3005 2.42996C14.0593 3.60221 14.4999 4.99966 14.4999 6.5Z" fill="#a8a29e" style="--darkreader-inline-fill: #4c5255;" data-darkreader-inline-fill=""></path>
+                    <path d="M0 18C0 15.7909 1.79086 14 4 14H10C12.2091 14 14 15.7909 14 18V22C14 22.5523 13.5523 23 13 23H1C0.447716 23 0 22.5523 0 22V18Z" fill="#a8a29e" style="--darkreader-inline-fill: #4c5255;" data-darkreader-inline-fill=""></path>
+                    <path d="M16 18V23H23C23.5522 23 24 22.5523 24 22V18C24 15.7909 22.2091 14 20 14H14.4722C15.4222 15.0615 16 16.4633 16 18Z" fill="#a8a29e" style="--darkreader-inline-fill: #4c5255;" data-darkreader-inline-fill=""></path>
+                  </g>
                 </svg>
                 <span class="flex-1 ms-3 whitespace-nowrap">Users</span>
               </a>
             </li>
             <li>
               <a href="{{ url_for('application.get_app_key', appid=app.id) }}" class="flex items-center p-2 rounded-lg hover:bg-stone-600 {% if sidebar == 'key' %}bg-stone-800{% endif %}">
-                <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="m17.418 3.623-.018-.008a6.713 6.713 0 0 0-2.4-.569V2h1a1 1 0 1 0 0-2h-2a1 1 0 0 0-1 1v2H9.89A6.977 6.977 0 0 1 12 8v5h-2V8A5 5 0 1 0 0 8v6a1 1 0 0 0 1 1h8v4a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-4h6a1 1 0 0 0 1-1V8a5 5 0 0 0-2.582-4.377ZM6 12H4a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2Z" />
+                <svg width="24px" height="24px" viewBox="2 2 20 20">
+                  <g>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M18.9771 14.7904C21.6743 12.0932 21.6743 7.72013 18.9771 5.02291C16.2799 2.3257 11.9068 2.3257 9.20961 5.02291C7.41866 6.81385 6.8169 9.34366 7.40432 11.6311C7.49906 12 7.41492 12.399 7.14558 12.6684L3.43349 16.3804C3.11558 16.6984 2.95941 17.1435 3.00906 17.5904L3.24113 19.679C3.26587 19.9017 3.36566 20.1093 3.52408 20.2677L3.73229 20.4759C3.89072 20.6343 4.09834 20.7341 4.32101 20.7589L6.4096 20.9909C6.85645 21.0406 7.30164 20.8844 7.61956 20.5665L8.32958 19.8565L6.58343 18.1294C6.28893 17.8382 6.28632 17.3633 6.5776 17.0688C6.86888 16.7743 7.34375 16.7717 7.63825 17.063L9.39026 18.7958L11.3319 16.8541C11.6013 16.5848 12 16.5009 12.3689 16.5957C14.6563 17.1831 17.1861 16.5813 18.9771 14.7904ZM12.5858 8.58579C13.3668 7.80474 14.6332 7.80474 15.4142 8.58579C16.1953 9.36684 16.1953 10.6332 15.4142 11.4142C14.6332 12.1953 13.3668 12.1953 12.5858 11.4142C11.8047 10.6332 11.8047 9.36684 12.5858 8.58579Z" fill="#a8a29e"></path>
+                  </g>
                 </svg>
                 <span class="flex-1 ms-3 whitespace-nowrap">Keys</span>
+              </a>
+            </li>
+            <li>
+              <a href="{{ url_for('application.get_app_key', appid=app.id) }}" class="flex items-center p-2 rounded-lg hover:bg-stone-600 {% if sidebar == 'data' %}bg-stone-800{% endif %}">
+                <svg width="24px" height="24px" viewBox="0 -0.5 17 17">
+                  <g transform="translate(1.000000, 1.000000)" fill="#a8a29e">
+                    <path d="M11.988,8.031 L11.988,7 L4.031,7 L4.031,8.031 L1.938,8.031 L1.938,7 L0.0139770486,7 L0.0139770486,13 L16,13 L16,7 L14.031,7 L14.031,8.031 L11.988,8.031 Z" class="si-glyph-fill"></path> <path d="M4,4.9855957 L4,5.96789551 L12,5.96789551 L12,4.9855957 L14,4.9855957 L14,5.96789551 L15.9873047,5.96789551 L15.9873045,3 L0,3 L2.21252548e-07,5.96789551 L1.97381592,5.96789551 L1.97381606,4.9855957 L4,4.9855957 Z" class="si-glyph-fill"></path> <path d="M6.0029298,1.943 L5.01,1.943 L5.01,0.031 L10.969,0.031 L10.969,1.94299991 L10.0092771,1.94299994 L10.009277,0.986999997 L6.0029297,0.98699997 L6.0029298,1.943 Z" class="si-glyph-fill"></path>
+                  </g>
+                </svg>
+                <span class="flex-1 ms-3 whitespace-nowrap">Secured Data</span>
               </a>
             </li>
           </ul>
