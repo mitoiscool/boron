@@ -8,7 +8,7 @@ from flask import (
 )
 from boron.util.general import gen_license
 from boron.util.db import query
-from boron.util.appuser import create
+from boron.util.appuser import create, login
 from datetime import datetime, timedelta
 
 
@@ -26,8 +26,8 @@ def register_user():
     license
     """
 
-    formUsername = formLicense = request.form.get('user')
-    formPassword = formLicense = request.form.get('pass')
+    formUsername = request.form.get('user')
+    formPassword = request.form.get('pass')
 
     formLicense = request.form.get('licensekey')
     formAppId = request.form.get('app_id')
@@ -39,15 +39,23 @@ def register_user():
 
 @api.post("client/login")
 def login_user():
-    """Use license key, initialize expiration date and create use
+    """Login, return session
     
     args:
     username
     password
-    license_key
     appid
 
     """
+
+    formUsername = request.form.get('user')
+    formPassword = request.form.get('pass')
+
+    formAppId = request.form.get('app_id')
+
+    return login(formUsername, formPassword, formAppId)
+
+
 
 @api.post("client/redeem")
 def redeem_user():

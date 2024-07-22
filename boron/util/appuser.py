@@ -34,7 +34,7 @@ def create(username, password, license, appid):
     
     # should check if user already exists
 
-    if record_exists("SELECT id FROM users WHERE username = :username;", {"username": username}):
+    if record_exists("SELECT id FROM users WHERE username = :username;", {"username": username, "appid": appid}):
         return {"success": False, "message": "User already exists."}
 
     hashedPass = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
@@ -53,3 +53,12 @@ def create(username, password, license, appid):
         return redeemResp
     
     return {"success": True, "message": "User has been registered successfully."}
+
+def login(username, password, appid):
+
+    if not record_exists("SELECT id FROM users WHERE username = :username AND appid = :appid;", {"username": username, "appid": appid}):
+        return {"success": False, "message": "User does not exist."}
+    
+    # compare password
+
+    realPass = query("SELECT password FROM users WHERE username = :p")
