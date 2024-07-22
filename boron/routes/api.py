@@ -7,7 +7,7 @@ from flask import (
     url_for,
 )
 from boron.util.general import gen_license
-from boron.util.db import query
+from boron.util.db import query, record_exists
 from boron.util.appuser import create, login, logout
 from datetime import datetime, timedelta
 
@@ -34,7 +34,9 @@ def register_user():
 
     # get license key info
 
-    return create(formUsername, formPassword, formLicense, formAppId)
+    create(formUsername, formPassword, formLicense, formAppId)
+
+    return login(formUsername, formPassword, formAppId)
 
 
 @api.post("client/login")
@@ -56,7 +58,7 @@ def login_user():
     return login(formUsername, formPassword, formAppId)
 
 @api.post("client/logout")
-def login_user():
+def logout_user():
     """Logout
     
     args:
@@ -70,6 +72,24 @@ def login_user():
     formAppId = request.form.get('app_id')
 
     return logout(formSess, formAppId)
+
+@api.post("client/loggedin")
+def loggedin_user():
+    """Loggedin
+    
+    args:
+    session
+    appid
+
+
+    returns:
+    bool true/false
+    """
+
+    formSess = request.form.get('session')
+    formAppId = request.form.get('app_id')
+
+    return {"loggedin": record_exists("SELECT id FROM users WHERE session = :sess AND appid = :appid", {"sess": formSess, "appid": formAppId})}
 
 @api.post("client/redeem")
 def redeem_user():
