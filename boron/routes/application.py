@@ -46,12 +46,12 @@ def create_app():
     if not appName:
         abort(400)
 
-    dev = get_dev()
-
     query(
         "INSERT INTO applications (dev_id, name) VALUES (:dev_id, :name)",
         {"dev_id": dev.id, "name": appName},
     )
+
+    logger.info(f"{dev.email} created app{{name:'{appName}'}}")
 
     return make_response(redirect(url_for("application.dev_home")))
 
@@ -86,9 +86,9 @@ def get_app_user(appid):
     return render_template(
         "panel/app/users.html",
         dev=dev,
-        users=get_application_users(dev, appid),
-        page=2,
         app=app,
+        users=get_application_users(dev, appid),
+        sidebar="user",
     )
 
 

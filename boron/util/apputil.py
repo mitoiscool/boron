@@ -1,6 +1,7 @@
 from boron.util.db import query
 from flask import abort
 from boron.util.general import gen_license
+from loguru import logger
 
 
 def owns_app(dev, appid: int) -> bool:
@@ -27,13 +28,14 @@ def select_app(dev, appid):
 
 
 def delete_application(dev, appid: int):
+    logger.info(f"deleting app{{id:{appid}}} as requested by {dev.email}")
     return query(
         "DELETE FROM applications WHERE dev_id = :dev_id AND id = :id",
         {"dev_id": dev.id, "id": appid},
     )
 
 
-def get_application_user(user_id: int):
+def get_user(user_id: int):
     return query("SELECT * FROM users WHERE id = :id", {"id": user_id})
 
 
@@ -47,7 +49,7 @@ def get_application_users(dev, appid) -> list:
         "SELECT user_id FROM app_user WHERE app_id = :app_id", {"app_id": appid}
     )
 
-    return [get_application_user(i, appid) for i in userIds]
+    return [get_user(i, appid) for i in userIds]
 
 
 def get_app_keys(dev, appid):
@@ -70,6 +72,8 @@ def gen_keys(dev, appid, count, length, prefix="BORON"):
             "INSERT INTO licensekeys (name, length, app_id) VALUES (:name, :length, :app_id)",
             {"name": k, "length": length, "app_id": appid},
         )
+
+    logger.info(f"{dev.email} generated {count} keys for app{{id:{appid}}}")
 
     return key
 
