@@ -135,7 +135,7 @@ def post_app_key(appid):
 
 @application.get("<int:appid>/data")
 def get_data(appid):
-    return get_securedata(get_dev(), appid)
+    return render_template("panel/app/data.html", get_securedata(get_dev(), appid))
 
 @application.post("<int:appid>/data/create")
 def create_data(appid):
