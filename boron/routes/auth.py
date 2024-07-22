@@ -7,7 +7,7 @@ from flask import (
     make_response,
 )
 from loguru import logger
-from boron.util.authenticator import login as lgn, logout as lgo, get_dev
+from boron.util.authenticator import login as lgn, logout as lgo, get_dev, logged_in
 
 
 auth = Blueprint("auth", __name__, url_prefix="/auth/")
@@ -15,6 +15,8 @@ auth = Blueprint("auth", __name__, url_prefix="/auth/")
 
 @auth.get("login")
 def get_login():
+    if logged_in():
+        return redirect(url_for("application.dev_home"))
     return render_template("/auth/login.html")
 
 

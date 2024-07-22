@@ -55,7 +55,7 @@ def login(email: str, password: str):
     }  # return session for further manipulation
 
 
-def logout(session):
+def logout(session: str):
     query(
         "UPDATE developers SET session = NULL WHERE session = :session",
         {"session": session},
@@ -63,7 +63,7 @@ def logout(session):
 
 
 # used only for creating dev accounts, not for production!
-def create_user(email, password):
+def create_user(email: str, password: str):
     # nameAlreadyUsed = query("SELECT COUNT(1) FROM developers WHERE email = ?;", (email,))
 
     # if int(nameAlreadyUsed[]) == 1:
@@ -74,3 +74,15 @@ def create_user(email, password):
         "INSERT INTO developers (email, password) VALUES (:email, :pass);",
         {"email": email, "pass": hashedPass},
     )
+
+
+def logged_in() -> bool:
+    session = request.cookies.get("session")
+    if not session:
+        return False
+    res = query(
+        "SELECT * FROM developers WHERE session = :session", {"session": session}
+    )
+    if len(res) != 1:
+        return False
+    return True
