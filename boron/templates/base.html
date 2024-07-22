@@ -23,7 +23,7 @@
                 <div class="flex space-x-4">
                   <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-stone-600 hover:text-white" -->
                   <a href="{{ url_for('application.dev_home') }}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-stone-600 hover:text-white {% if navbar is not defined or navbar == 'dash' %}bg-stone-900 text-white{% endif %}" aria-current="page">Dashboard</a>
-                  <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-stone-600 hover:text-white {% if navbar == 'app' %}bg-stone-900 text-white{% endif %}">Application</a>
+                  <a href="#app" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-stone-600 hover:text-white {% if navbar == 'app' %}bg-stone-900 text-white{% endif %}">Application</a>
                 </div>
               </div>
             </div>
