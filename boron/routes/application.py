@@ -127,7 +127,7 @@ def post_app_key(appid):
         count, length, prefix = (
             int(form.get("count")),
             int(form.get("length")),
-            form.get("prefix"),
+            "".join(form.get("prefix").split()),
         )
         if not prefix:
             prefix = "BORON"
