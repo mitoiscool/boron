@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block head %}
+  <title>Secured Data - App: {{ app.name }}</title>
+{% endblock %}
+{% block body %}
+  <div class="flex p-4 mx-auto">
+    <div class="sm:text-lg w-full">
+      <section>
+        <h2 class="mb-8 text-4xl tracking-tight font-bold text-white">
+          Key-Values
+          <button type="button" class="bg-none align-bottom" onclick="reveal('#create-data')">
+            <svg width="48px" height="48x" viewBox="0 0 24 24">
+              <g stroke-width="0" transform="translate(6,6), scale(0.5)">
+                <rect x="-2.4" y="-2.4" width="28.80" height="28.80" rx="14.4" fill="#ffffff" strokewidth="0" style="--darkreader-inline-fill: #181a1b;" data-darkreader-inline-fill="" />
+              </g>
+              <g>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM12.75 9C12.75 8.58579 12.4142 8.25 12 8.25C11.5858 8.25 11.25 8.58579 11.25 9L11.25 11.25H9C8.58579 11.25 8.25 11.5858 8.25 12C8.25 12.4142 8.58579 12.75 9 12.75H11.25V15C11.25 15.4142 11.5858 15.75 12 15.75C12.4142 15.75 12.75 15.4142 12.75 15L12.75 12.75H15C15.4142 12.75 15.75 12.4142 15.75 12C15.75 11.5858 15.4142 11.25 15 11.25H12.75V9Z" fill="#9333ea" style="--darkreader-inline-fill: #6111a9;" data-darkreader-inline-fill="" />
+              </g>
+            </svg>
+          </button>
+        </h2>
+        {% if data %}
+          <div class="grid grid-flow-row gap-4 text-neutral-600 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {% for data in data %}
+              <div class="w-full p-4 bg-stone-700 text-white shadow-lg rounded-lg">
+                <div class="m-1">
+                  <section>
+                    <h3 class="text-3xl tracking-tight font-bold">
+                      <code>{{ data.key }}</code>
+                      <span class="text-sm font-normal">ID: {{ data.id }}</span>
+                    </h3>
+                    <code><textarea name="value" id="edit-value-input-{{ data.id }}" form="edit-data-{{ data.id }}" required rows="5" class="mt-2 resize-none block p-2 w-full text-sm rounded-lg border-none text-white bg-stone-800" spellcheck="false">{{ data.value }}</textarea></code>
+                  </section>
+                </div>
+                <div class="sm:flex sm:flex-row-reverse mt-4">
+                  <button type="button" onclick="reveal('#delete-data-{{ data.id }}')" class="mx-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">Delete</button>
+                  <button type="submit" form="edit-data-{{ data.id }}" class="mx-2 bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-full">Apply</button>
+                </div>
+              </div>
+              <form id="edit-data-{{ data.id }}" action="{{ url_for('application.edit_data', appid=app.id) }}" method="post" class="hidden">
+                <input type="number" name="id" required value="{{ data.id }}" class="hidden" aria-hidden="true" />
+                <input type="text" name="key" required value="{{ data.key }}" class="hidden" aria-hidden="true" />
+              </form>
+              <form id="delete-data-{{ data.id }}" class="hidden" action="{{ url_for('application.delete_data', appid=app.id) }}" method="post">
+                <input name="id" value="{{ data.id }}" class="hidden" />
+                <div class="relative z-10 text-white" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                  <div class="fixed inset-0 bg-stone-800 backdrop-blur bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                  <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+                    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                      <div class="relative transform overflow-hidden rounded-lg bg-stone-600 text-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                        <div class="bg-stone-600 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                          <div class="sm:flex sm:items-start">
+                            <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                              <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                              </svg>
+                            </div>
+                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                              <h3 class="text-base font-semibold leading-6" id="modal-title">Delete application</h3>
+                              <div class="mt-2">
+                                <p class="text-sm">
+                                  Are you sure to delete data <strong>{{ data.key }}</strong>?
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="bg-red-800 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                          <button type="submit" form="delete-data-{{ data.id }}" class="outline-none inline-flex w-full justify-center rounded-lg text-white bg-red-950 px-3 py-2 text-sm font-semibold shadow-sm hover:bg-red-900 sm:ml-3 sm:w-auto">Delete</button>
+                          <button type="button" onclick="reveal('#delete-data-{{ data.id }}')" class="b-btn mt-3 bg-white text-black shadow-sm hover:bg-stone-200 sm:mt-0 sm:w-auto">Cancel</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="flex justify-center">
+            <p class="text-stone-400">There is no data.</p>
+          </div>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+
+  <div id="create-data" class="hidden relative z-10 text-white" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <form action="{{ url_for('application.create_data', appid=app.id) }}" method="post">
+      <div class="fixed inset-0 bg-stone-800 backdrop-blur bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+      <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+          <div class="relative transform overflow-hidden rounded-lg bg-stone-600 text-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+            <div class="bg-stone-600 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+              <div class="sm:flex sm:items-start">
+                <div class="mx-auto flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-none sm:mx-0 sm:h-10 sm:w-10">
+                  <img class="h-12 w-auto" src="{{ url_for('static', filename='boron.svg') }}" alt="Fig. Boron" />
+                </div>
+                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                  <h3 class="text-base font-semibold leading-6" id="modal-title">Create secured data key-value pair</h3>
+                  <div class="mt-2">
+                    <div class="m-2 w-72">
+                      <div class="relative w-full min-w-[200px] h-10">
+                        <input name="key" required type="text" id="keyname-input" class="b-input" placeholder="Enter a key name" />
+                      </div>
+                    </div>
+                    <p class="text-sm">Lorem ipsum is some dummy text.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-stone-800 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+              <button type="submit" class="b-btn shadow-sm sm:ml-3 sm:w-auto">Create</button>
+              <button type="button" onclick="reveal('#create-data')" class="b-btn text-black bg-white hover:bg-stone-200 mt-3 shadow-sm sm:mt-0 sm:w-auto">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock %}

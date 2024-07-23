@@ -39,7 +39,7 @@
           </button>
         </h2>
         {% if apps %}
-          <div class="grid gap-4 grid-cols-3">
+          <div class="grid grid-flow-row gap-4 text-neutral-600 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {% for app in apps %}
               <div class="p-4 bg-stone-700 text-white shadow-lg rounded-lg">
                 <div class="flex m-2">
@@ -52,7 +52,7 @@
                   </section>
                 </div>
                 <div class="sm:flex sm:flex-row-reverse">
-                  <button onclick="reveal('#delete-app')" class="mx-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">Delete</button>
+                  <button type="button" onclick="reveal('#delete-app')" class="mx-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">Delete</button>
                   <a href="{{ url_for('application.get_app', appid=app.id) }}" class="mx-2 bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-full">View</a>
                   <form action="{{ url_for('application.delete_app', appid=app.id) }}" method="post">
                     <div id="delete-app" class="hidden relative z-10 text-white" aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -110,7 +110,7 @@
             <div class="bg-stone-600 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
               <div class="sm:flex sm:items-start">
                 <div class="mx-auto flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-none sm:mx-0 sm:h-10 sm:w-10">
-                  <img class="h-8 w-auto" src="{{ url_for('static', filename='boron.svg') }}" alt="Fig. Boron" />
+                  <img class="h-12 w-auto" src="{{ url_for('static', filename='boron.svg') }}" alt="Fig. Boron" />
                 </div>
                 <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                   <h3 class="text-base font-semibold leading-6" id="modal-title">Create application</h3>

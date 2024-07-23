@@ -55,7 +55,7 @@
     {% if app is defined %}
       <hr class="flex h-1 rounded-full border-none bg-stone-700" />
       <!-- Sidebar -->
-      <aside class="flex fixed top-16 mt-8 m-4 left-0 z-40 w-auto bottom-16" aria-label="Sidebar">
+      <aside class="flex fixed top-16 mt-8 m-4 left-0 w-auto bottom-16" aria-label="Sidebar">
         <div class="rounded-lg h-full px-3 py-4 overflow-y-auto bg-stone-700">
           <ul class="space-y-2 font-medium text-white">
             <li>
@@ -113,13 +113,15 @@
           position: fixed;
           margin: 1rem;
           left: 12rem;
+          right: 0.5rem /* 8px */;
           top: 4rem;
+          bottom: 0.5rem /* 8px */;
           margin-top: 2rem;
         }
       </style>
     {% endif %}
 
-    <div class="body text-white select-text">
+    <div class="body text-white select-text overflow-auto">
       {% block body %}
 
       {% endblock %}
