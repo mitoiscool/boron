@@ -8,7 +8,7 @@ from flask import (
 )
 from boron.util.general import gen_license
 from boron.util.db import query, record_exists
-from boron.util.appuser import create, login, logout
+from boron.util.appuser import create, login, logout, get_userdata, set_userdata
 from datetime import datetime, timedelta
 
 
@@ -93,6 +93,43 @@ def loggedin_user():
     formAppId = request.form.get('app_id')
 
     return {"loggedin": record_exists("SELECT id FROM users WHERE session = :sess AND appid = :appid", {"sess": formSess, "appid": formAppId})}
+
+@api.post("user/get")
+def get_user():
+    """Use appid and username to locate user
+    
+    args:
+
+    appid
+    username
+
+    """
+    appid = request.form.get('appid')
+    user = query("SELECT username FROM users WHERE session = :session AND app_id = :appid", {"session": request.form.get('session'), "appid": appid})
+
+    if not user:
+        return {"success": False, "message": "Could not find session."}
+    
+    return get_userdata(user, appid)
+
+@api.post("user/set")
+def set_user():
+    """Use appid and username to locate user
+    
+    args:
+
+    appid
+    session
+    data
+
+    """
+    appid = request.form.get('appid')
+    user = query("SELECT username FROM users WHERE session = :session AND app_id = :appid", {"session": request.form.get('session'), "appid": appid})
+
+    if not user:
+        return {"success": False, "message": "Could not find session."}
+    
+    return set_userdata(user, appid, request.form.get('data'))
 
 @api.post("client/redeem")
 def redeem_user():

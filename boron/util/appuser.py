@@ -102,3 +102,37 @@ def logout(session, appid):
     query("UPDATE users SET session = '' WHERE session = :sess;", {"sess": session})
 
     return {"success": True}
+
+def set_data(username, appid):
+    if not record_exists("SELECT id FROM users WHERE username = :us;", {"us": username}):
+        return {"success": False, "message": "User does not exist"}
+    
+
+
+def get_userdata(username, appid):
+    userIds = query("SELECT id FROM users WHERE username = :user", {"user": username})
+
+    print(userIds)
+
+    if not userIds:
+        return {"success": False, "message": "Could not find user."}
+
+    # chatgpt pls work
+    resp = query("SELECT data FROM app_user WHERE app_id = :appid AND user_id = :userid", {"appid": appid, "userid": userIds[0].id})
+
+    if not resp:
+        return {"success": False, "message": "Could not find user data."}
+    
+    return resp[0].data
+
+def set_userdata(username, appid, data):
+    userIds = query("SELECT id FROM users WHERE username = :user", {"user": username})
+
+    print(userIds)
+
+    if not userIds:
+        return {"success": False, "message": "Could not find user."}
+    
+    query("UPDATE app_user SET data = :userdata WHERE user_id = :uid AND app_id = :appid", {"userdata": data, "uid": userIds[0].id, "appid": appid})
+    
+    return {"success": True}
