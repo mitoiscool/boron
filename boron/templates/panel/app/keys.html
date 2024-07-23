@@ -20,7 +20,7 @@
           <label for="prefix-input" class="block text-sm font-medium leading-6">Prefix</label>
           <input type="text" name="prefix" id="prefix-input" class="b-input mt-1" minlength="5" maxlength="5" placeholder="BORON" value="{{ (app.name|upper + 'XXXXX')|batch(5)|first|join }}" />
         </div>
-        <button type="submit" class="b-btn sm:col-span-1 m-2 mt-7 mb-0.5">Generate</button>
+        <button type="submit" class="b-btn col-span-1 w-fit m-2 mt-7 mb-0.5 px-2">Generate</button>
       </div>
     </form>
     {% if keys %}
@@ -34,6 +34,7 @@
                 <th class="px-8 p-1">Length</th>
                 <th class="px-8 p-1">Creation Date</th>
                 <th class="px-8 p-1">Used</th>
+                <th class="px-8 p-1">Operation</th>
               </tr>
             </thead>
             <tbody class="overflow-scroll h-48 divide-y divide-solid divide-stone-700">
@@ -45,8 +46,21 @@
                   </td>
                   <td class="px-8">{{ key.length }}</td>
                   <td class="px-8">{{ key.creation }}</td>
-                  <td class="px-8">{{ key.used }}</td>
+                  <td class="px-8">
+                    <form id="update-key-{{ key.id }}" action="{{ url_for('application.update_app_key', appid=app.id, keyid=key.id) }}" method="post">
+                      {% if key.used %}
+                        <input type="checkbox" name="used" checked />
+                      {% else %}
+                        <input type="checkbox" name="used" />
+                      {% endif %}
+                    </form>
+                  </td>
+                  <td class="px-8">
+                      <button type="submit" form="update-key-{{ key.id }}" class="mx-1 bg-emerald-500 hover:bg-emerald-700 text-white font-bold text-sm rounded-lg p-0.5">Update</button>
+                      <button type="submit" form="delete-key-{{ key.id }}" class="mx-1 bg-red-500 hover:bg-red-700 text-white font-bold text-sm rounded-lg p-0.5">Delete</button>
+                  </td>
                 </tr>
+                <form id="delete-key-{{ key.id }}" action="{{ url_for('application.delete_app_key', appid=app.id, keyid=key.id) }}" method="post" />
               {% endfor %}
             </tbody>
           </table>

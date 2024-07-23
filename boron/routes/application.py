@@ -6,6 +6,7 @@ from flask import (
     redirect,
     url_for,
     make_response,
+    Response,
 )
 from loguru import logger
 from boron.util.authenticator import get_dev
@@ -20,13 +21,15 @@ from boron.util.apputil import (
     edit_securedata,
     create_securedata,
     delete_securedata,
+    delete_key,
+    update_key,
 )
 
 application = Blueprint("application", __name__, url_prefix="/applications/")
 
 
 @application.get("home")
-def dev_home():
+def dev_home() -> Response:
     dev = get_dev()
 
     apps = query(
@@ -38,7 +41,7 @@ def dev_home():
 
 # Create app (post)
 @application.post("create")
-def create_app():
+def create_app() -> Response:
     """
     Form args:
     appname
@@ -61,7 +64,7 @@ def create_app():
 
 # Delete app (post)
 @application.post("<int:appid>/delete")
-def delete_app(appid: int):
+def delete_app(appid: int) -> Response:
     dev = get_dev()
 
     delete_application(dev, appid)
@@ -71,7 +74,7 @@ def delete_app(appid: int):
 
 # App home page
 @application.get("<int:appid>/view")
-def get_app(appid: int):
+def get_app(appid: int) -> Response:
     dev = get_dev()
 
     app = select_app(dev, appid)
@@ -87,7 +90,7 @@ def get_app(appid: int):
 
 # App users page
 @application.get("<appid>/users/")
-def get_app_user(appid):
+def get_app_user(appid) -> Response:
     dev = get_dev()
 
     app = select_app(dev, appid)
@@ -104,7 +107,7 @@ def get_app_user(appid):
 
 # App keys page
 @application.get("<int:appid>/keys/")
-def get_app_key(appid):
+def get_app_key(appid) -> Response:
     dev = get_dev()
 
     keys = get_app_keys(dev, appid)
@@ -120,7 +123,7 @@ def get_app_key(appid):
 
 
 @application.post("<int:appid>/keys")
-def post_app_key(appid):
+def post_app_key(appid) -> Response:
     dev = get_dev()
     form = request.form
     try:
@@ -138,8 +141,29 @@ def post_app_key(appid):
     return redirect(url_for("application.get_app_key", appid=appid))
 
 
+@application.post("<int:appid>/keys/<int:keyid>/update")
+def update_app_key(appid, keyid) -> Response:
+    dev = get_dev()
+    form = request.form
+    try:
+        used = form.get("used")
+        assert used in {"on", "off"}
+        used = used == "on"
+    except AssertionError:
+        return abort(400)
+    update_key(dev, appid, keyid, {"used": used})
+    return redirect(url_for("application.get_app_key", appid=appid))
+
+
+@application.post("<int:appid>/keys/<int:keyid>/delete")
+def delete_app_key(appid, keyid) -> Response:
+    dev = get_dev()
+    delete_key(dev, appid, keyid)
+    return redirect(url_for("application.get_app_key", appid=appid))
+
+
 @application.get("<int:appid>/data")
-def get_data(appid):
+def get_data(appid) -> Response:
     dev = get_dev()
     return render_template(
         "panel/app/data.html",
@@ -152,7 +176,7 @@ def get_data(appid):
 
 
 @application.post("<int:appid>/data/create")
-def create_data(appid):
+def create_data(appid) -> Response:
     keyname = request.form.get("key")
 
     create_securedata(keyname, get_dev(), appid)
@@ -161,7 +185,7 @@ def create_data(appid):
 
 
 @application.post("<int:appid>/data/edit")
-def edit_data(appid):
+def edit_data(appid) -> Response:
     keyid = request.form.get("id")
     keyname = request.form.get("key")
     keyvalue = request.form.get("value")
@@ -172,7 +196,7 @@ def edit_data(appid):
 
 
 @application.post("<int:appid>/data/delete")
-def delete_data(appid):
+def delete_data(appid) -> Response:
     keyid = request.form.get("id")
 
     delete_securedata(keyid, get_dev(), appid)

@@ -82,6 +82,33 @@ def gen_keys(dev, appid, count, length, prefix="BORON"):
     return key
 
 
+def update_key(dev, appid: int, keyid: int, new: dict):
+    ensure_owns_app(dev, appid)
+    res = query(
+        "SELECT NULL FROM licensekeys WHERE id = :id AND app_id = :app_id",
+        {"id": keyid, "app_id": appid},
+    )
+    if not res:
+        return abort(404)
+    assert len(res) == 1
+    query(
+        "UPDATE licensekeys SET used = :used WHERE id = :id",
+        {"id": keyid, "used": new["used"]},
+    )
+
+
+def delete_key(dev, appid: int, keyid: int):
+    ensure_owns_app(dev, appid)
+    res = query(
+        "SELECT NULL FROM licensekeys WHERE id = :id AND app_id = :app_id",
+        {"id": keyid, "app_id": appid},
+    )
+    if not res:
+        return abort(404)
+    assert len(res) == 1
+    query("DELETE FROM licensekeys WHERE id = :id", {"id": keyid})
+
+
 def get_securedata(dev, appid):
     ensure_owns_app(dev, appid)
 
