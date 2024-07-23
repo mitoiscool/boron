@@ -1,14 +1,14 @@
-from flask import request, make_response, redirect, url_for
+from flask import make_response, redirect, url_for
 import requests
 
-url_base = "https://boron.dev/api/client/"
+url_base = "https://www.boron.dev/api/client/"
 app_id = 2
 
 # form: username, password
-def login(request, redirect_loc):
+def login(req, redirect_loc):
 
-    username = request.form.get('username')
-    password = request.form.get('password')
+    username = req.form.get('username')
+    password = req.form.get('password')
 
     resp = requests.post(url_base + "login", json={
         "username": username,
