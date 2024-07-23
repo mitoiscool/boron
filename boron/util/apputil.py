@@ -50,27 +50,6 @@ def get_user(id: int):
     return query("SELECT * FROM users WHERE id = :id", {"id": id})
 
 
-def get_app_stat(dev, appid: int) -> dict:
-    ensure_owns_app(dev, appid)
-
-    res = {
-        "user": count_user(dev, appid),
-        "key": count_key(dev, appid),
-        "data": count_securedata(dev, appid),
-    }
-    return res
-
-
-def count_user(dev, appid: int) -> int:
-    ensure_owns_app(dev, appid)
-
-    users = query(
-        "SELECT NULL FROM app_user JOIN users WHERE app_user.app_id = :app_id AND users.id = app_user.user_id",
-        {"app_id": appid},
-    )
-    return len(users)
-
-
 def get_app_users(dev, appid: int) -> list:
     ensure_owns_app(dev, appid)
     # query the app-users map to find all uids for this app, then return a list from the raw users table based on uids
@@ -79,15 +58,6 @@ def get_app_users(dev, appid: int) -> list:
         {"app_id": appid},
     )
     return users
-
-
-def count_key(dev, appid: int) -> int:
-    ensure_owns_app(dev, appid)
-
-    key = query(
-        "SELECT NULL FROM licensekeys WHERE app_id = :app_id", {"app_id": appid}
-    )
-    return len(key)
 
 
 def get_app_keys(dev, appid: int):
@@ -110,15 +80,6 @@ def gen_keys(dev, appid, count, length, prefix="BORON"):
 
     logger.info(f"{dev.email} generated {count} keys for app{{id:{appid}}}")
     return key
-
-
-def count_securedata(dev, appid: int) -> int:
-    ensure_owns_app(dev, appid)
-
-    res = query(
-        "SELECT NULL FROM secured_data WHERE app_id = :appid;", {"appid": appid}
-    )
-    return len(res)
 
 
 def get_securedata(dev, appid):
