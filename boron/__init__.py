@@ -17,6 +17,7 @@ def create_app():
     app.register_blueprint(application)
     app.register_blueprint(api)
     app.register_blueprint(root)
+    app.register_error_handler(400, error.http_400)
     app.register_error_handler(401, error.http_401)
     app.register_error_handler(403, error.http_403)
     app.register_error_handler(404, error.http_404)

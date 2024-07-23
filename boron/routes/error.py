@@ -1,6 +1,10 @@
 from flask import render_template, url_for
 
 
+def http_400(_):
+    return render_template("httperr.html", code=400, msg="Bad Request"), 400
+
+
 def http_401(_):
     return render_template(
         "httperr.html", code=401, msg="Unauthorized", url=url_for("auth.get_login")
