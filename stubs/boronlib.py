@@ -1,8 +1,33 @@
 from flask import make_response, redirect, url_for
 import requests
 
-url_base = "https://www.boron.dev/api/client/"
+url_base = "https://www.boron.dev/api/"
 app_id = 2
+
+def get_user_data(req):
+    session = req.cookies.get('session')
+
+    if not session:
+        return {"success": False, "message": "Session not valid. Is the user logged in?"}
+    
+    resp = requests.post(url_base + "/user/get", json={
+        "appid": app_id,
+        "session": session
+    })
+
+    return resp.text
+
+def set_user_data(req, data):
+    session = req.cookies.get('session')
+
+    if not session:
+        return {"success": False, "message": "Session not valid. Is the user logged in?"}
+    
+    resp = requests.post(url_base + "/user/set", json={
+        "appid": app_id,
+        "session": session,
+        "data": data
+    })
 
 # form: username, password
 def login(req, redirect_loc):
@@ -10,11 +35,11 @@ def login(req, redirect_loc):
     username = req.form.get('username')
     password = req.form.get('password')
 
-    resp = requests.post(url_base + "login", json={
+    resp = requests.post(url_base + "client/login", json={
         "username": username,
         "password": password,
         "app_id": app_id
-    })
+    }).json()
 
     if resp['success'] != 'true':
         return resp
@@ -30,12 +55,12 @@ def register(request, redirect_loc):
     password = request.form.get('password')
     license = request.form.get('licensekey')
 
-    resp = requests.post(url_base + "register", json={
+    resp = requests.post(url_base + "client/register", json={
         "username": username,
         "password": password,
         "licensekey": license,
         "app_id": app_id
-    })
+    }).json()
 
     if resp['success'] != 'true':
         return resp
@@ -52,7 +77,7 @@ def logout(request, redirect_loc):
     if not session:
         return resp # already logged out?
     
-    requests.post(url_base + "logout", json = {
+    requests.post(url_base + "client/logout", json = {
         "session": session,
         "app_id": app_id
     })
@@ -65,10 +90,10 @@ def is_logged_in(request):
     if not session:
         return False
     
-    resp = requests.post(url_base + "logout", json = {
+    resp = requests.post(url_base + "client/loggedin", json = {
         "session": session,
         "app_id": app_id
-    })
+    }).json()
 
     return bool(resp['loggedin'])
 
