@@ -38,6 +38,7 @@ def delete_application(dev, appid: int):
 
     query("DELETE FROM app_user WHERE app_id = :app_id", {"app_id": appid})
     query("DELETE FROM licensekeys WHERE app_id = :app_id", {"app_id": appid})
+    query("DELETE FROM secured_data WHERE app_id = :app_id", {"app_id": appid})
 
     return query(
         "DELETE FROM applications WHERE dev_id = :dev_id AND id = :id",
