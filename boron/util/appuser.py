@@ -3,19 +3,31 @@ from boron.util.general import rnd_str
 from datetime import datetime, timedelta
 import bcrypt
 
-def redeem_key(userid, license, appid):
-    licenseKey = query("SELECT * FROM licensekeys WHERE name = :license AND app_id = :appid", {"license": license, "appid": appid})[0]
+
+def key_valid(license, appid):
+    licenseKey = query("SELECT * FROM licensekeys WHERE name = :license AND app_id = :appid", {"license": license, "appid": appid})
 
     if not licenseKey:
         return {"success": False, "message": "License key does not exist."}
     
-    if licenseKey.used == 1:
+    if licenseKey[0].used == 1:
+        return {"success": False, "message": "License key has already been used."}
+    
+    return True
+
+def redeem_key(userid, license, appid):
+    licenseKey = query("SELECT * FROM licensekeys WHERE name = :license AND app_id = :appid", {"license": license, "appid": appid})
+
+    if not licenseKey:
+        return {"success": False, "message": "License key does not exist."}
+    
+    if licenseKey[0].used == 1:
         return {"success": False, "message": "License key has already been used."}
 
     # then calculate expiration relative to key, set key to used
     # then add record to app_users to link the app to the user with expiration
     current_date = datetime.now()
-    expiration_date = current_date + timedelta(days=licenseKey.length)
+    expiration_date = current_date + timedelta(days=licenseKey[0].length)
 
     # set key to used
     query("UPDATE licensekeys SET used = '1' WHERE name = :license AND app_id = :appid;", {"license": license, "appid": appid})
@@ -35,8 +47,12 @@ def create(username, password, license, appid):
     
     # should check if user already exists
 
-    if record_exists("SELECT id FROM users WHERE username = :username AND app_id = :appid;", {"username": username, "appid": appid}):
+    if record_exists("SELECT id FROM users WHERE username = :username;", {"username": username}):
         return {"success": False, "message": "User already exists."}
+    
+    keyResp = key_valid(license, appid)
+    if keyResp != True:
+        return keyResp
 
     hashedPass = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
     query(
@@ -46,7 +62,7 @@ def create(username, password, license, appid):
 
     # get user id then redeem key
 
-    user_id = query("SELECT id FROM users WHERE username = :uname AND app_id = :appid;", {"uname": username, "appid": appid})[0].id
+    user_id = query("SELECT id FROM users WHERE username = :uname;", {"uname": username})[0].id
 
     redeemResp = redeem_key(user_id, license, appid)
     
@@ -57,12 +73,12 @@ def create(username, password, license, appid):
 
 def login(username, password, appid):
 
-    if not record_exists("SELECT id FROM users WHERE username = :username AND appid = :app_id;", {"username": username, "appid": appid}):
+    if not record_exists("SELECT id FROM users WHERE username = :username;", {"username": username}):
         return {"success": False, "message": "User does not exist."}
     
     # compare password
 
-    realPass = query("SELECT password FROM users WHERE username = :username AND app_id = :appid;", {"username": username, "appid": appid})
+    realPass = query("SELECT password FROM users WHERE username = :username;", {"username": username})[0].password
 
     if not bcrypt.checkpw(password.encode("utf-8"), realPass):  #  invalid password
         return {"success": False, "message": "Your password is incorrect"}
@@ -70,8 +86,8 @@ def login(username, password, appid):
     session = rnd_str(15)
 
     query(
-        "UPDATE users SET session = :session WHERE username = :username AND app_id = :appid;",
-        {"session": session, "username": username, "appid": appid},
+        "UPDATE users SET session = :session WHERE username = :username;",
+        {"session": session, "username": username},
     )
 
     return {
@@ -80,9 +96,9 @@ def login(username, password, appid):
     }  # return session for further manipulation
 
 def logout(session, appid):
-    if not record_exists("SELECT id FROM users WHERE session = :sess AND appid = :app_id;", {"sess": session, "appid": appid}):
+    if not record_exists("SELECT id FROM users WHERE session = :sess;", {"sess": session}):
         return {"success": False, "message": "Session does not exist"}
     
-    query("UPDATE users SET session = '' WHERE session = :sess AND app_id = :appid", {"sess": session, "appid": appid})
+    query("UPDATE users SET session = '' WHERE session = :sess;", {"sess": session})
 
     return {"success": True}

@@ -1,6 +1,5 @@
 from flask import Flask
 from records import Database
-import tomllib
 from loguru import logger
 from sys import stdout
 
@@ -22,7 +21,7 @@ def create_app():
     app.register_error_handler(403, error.http_403)
     app.register_error_handler(404, error.http_404)
 
-    app.cfg = tomllib.load(open("config.toml", "rb"))
+    app.cfg = app.cfg = {'db-url': 'sqlite:///boron.db', 'log-level': 'TRACE'} # tomllib cannot be installed on pythonanywhere
     logger.remove(0)
     logger.add(stdout, level=app.cfg["log-level"])
     logger.debug("logger initialized")
