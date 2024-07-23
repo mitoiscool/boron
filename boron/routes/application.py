@@ -131,7 +131,7 @@ def post_app_key(appid):
         )
         if not prefix:
             prefix = "BORON"
-        assert len(prefix) == 5
+        prefix = f"{prefix}XXXXX"[:5]
     except Exception:
         return abort(400)
     gen_keys(dev, appid, count, length, prefix)
