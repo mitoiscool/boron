@@ -138,6 +138,14 @@ def edit_securedata(id, key, value, dev, appid):
 def create_securedata(key, dev, appid):
     ensure_owns_app(dev, appid)
 
+    exist = query(
+        "SELECT NULL FROM secured_data WHERE key = :key AND app_id = :app_id",
+        {"key": key, "app_id": appid},
+    )
+
+    if exist:
+        return abort(400)
+
     query(
         "INSERT INTO secured_data (key, app_id) VALUES (:key, :appid);",
         {"key": key, "appid": appid},
