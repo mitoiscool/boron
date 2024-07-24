@@ -36,8 +36,8 @@ def login(req, redirect_loc):
     password = req.form.get('password')
 
     resp = requests.post(url_base + "client/login", json={
-        "username": username,
-        "password": password,
+        "user": username,
+        "pass": password,
         "app_id": app_id
     }).json()
 
@@ -56,8 +56,8 @@ def register(request, redirect_loc):
     license = request.form.get('licensekey')
 
     resp = requests.post(url_base + "client/register", json={
-        "username": username,
-        "password": password,
+        "user": username,
+        "pass": password,
         "licensekey": license,
         "app_id": app_id
     }).json()

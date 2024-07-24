@@ -5,6 +5,10 @@ import bcrypt
 
 
 def key_valid(license, appid):
+
+    if query("SELECT useLicenseKeys FROM applications WHERE id = :appid", {"appid": appid})[0].useLicenseKeys == 'false':
+        return True
+    
     licenseKey = query("SELECT * FROM licensekeys WHERE name = :license AND app_id = :appid", {"license": license, "appid": appid})
 
     if not licenseKey:
@@ -16,21 +20,26 @@ def key_valid(license, appid):
     return True
 
 def redeem_key(userid, license, appid):
-    licenseKey = query("SELECT * FROM licensekeys WHERE name = :license AND app_id = :appid", {"license": license, "appid": appid})
 
-    if not licenseKey:
-        return {"success": False, "message": "License key does not exist."}
+
+    if query("SELECT useLicenseKeys FROM applications WHERE id = :appid", {"appid": appid})[0].useLicenseKeys == 'true':
+        licenseKey = query("SELECT * FROM licensekeys WHERE name = :license AND app_id = :appid", {"license": license, "appid": appid})
+
+        if not licenseKey:
+            return {"success": False, "message": "License key does not exist."}
+        
+        if licenseKey[0].used == 1:
+            return {"success": False, "message": "License key has already been used."}
+
+        # then calculate expiration relative to key, set key to used
+        # then add record to app_users to link the app to the user with expiration
+        expiration_date = datetime.now() + timedelta(days=licenseKey[0].length)
+
+        # set key to used
+        query("UPDATE licensekeys SET used = '1' WHERE name = :license AND app_id = :appid;", {"license": license, "appid": appid})
+    else:
+        expiration_date = datetime.now() + timedelta(days=100000)
     
-    if licenseKey[0].used == 1:
-        return {"success": False, "message": "License key has already been used."}
-
-    # then calculate expiration relative to key, set key to used
-    # then add record to app_users to link the app to the user with expiration
-    current_date = datetime.now()
-    expiration_date = current_date + timedelta(days=licenseKey[0].length)
-
-    # set key to used
-    query("UPDATE licensekeys SET used = '1' WHERE name = :license AND app_id = :appid;", {"license": license, "appid": appid})
 
     # apply user to application
     query(
@@ -63,6 +72,7 @@ def create(username, password, license, appid):
     # get user id then redeem key
 
     user_id = query("SELECT id FROM users WHERE username = :uname;", {"uname": username})[0].id
+
 
     redeemResp = redeem_key(user_id, license, appid)
     
@@ -102,12 +112,7 @@ def logout(session, appid):
     query("UPDATE users SET session = '' WHERE session = :sess;", {"sess": session})
 
     return {"success": True}
-
-def set_data(username, appid):
-    if not record_exists("SELECT id FROM users WHERE username = :us;", {"us": username}):
-        return {"success": False, "message": "User does not exist"}
     
-
 
 def get_userdata(username, appid):
     userIds = query("SELECT id FROM users WHERE username = :user", {"user": username})

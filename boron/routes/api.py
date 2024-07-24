@@ -84,15 +84,13 @@ def loggedin_user():
     session
     appid
 
-
     returns:
     bool true/false
     """
 
     formSess = request.form.get('session')
-    formAppId = request.form.get('app_id')
 
-    return {"loggedin": record_exists("SELECT id FROM users WHERE session = :sess AND appid = :appid", {"sess": formSess, "appid": formAppId})}
+    return {"loggedin": record_exists("SELECT id FROM users WHERE session = :sess", {"sess": formSess})}
 
 @api.post("user/get")
 def get_user():
