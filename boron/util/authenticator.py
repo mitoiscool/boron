@@ -23,6 +23,18 @@ def get_dev() -> Record:
     return dev
 
 
+def register(email: str, password: str) -> str | None:
+    if query("SELECT NULL FROM developers WHERE email = :email", {"email": email}):
+        return "user already exists"
+    logger.info(f"register developer {email}, password = '{password}'")
+    hashed_pass = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+    query(
+        "INSERT INTO developers (email, password) VALUES (:email, :pass);",
+        {"email": email, "pass": hashed_pass},
+    )
+    pass
+
+
 def login(email: str, password: str):
     pswd = query(
         "SELECT password FROM developers WHERE email = :email;", {"email": email}

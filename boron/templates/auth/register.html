@@ -8,7 +8,7 @@
       <p class="flex justify-center">
         <img src="{{ url_for('static', filename='boron.svg') }}" width="180" alt="Fig: Boron Icon" />
       </p>
-      <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">Sign in to Boron</h2>
+      <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">Boron Developer Registration</h2>
     </div>
     {% if error %}
       <div id="error-msg" class="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -26,7 +26,7 @@
       </div>
     {% endif %}
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form id="login-credentials" class="space-y-6" action="{{ url_for('auth.login') }}" method="POST">
+      <form class="space-y-6" action="{{ url_for('auth.post_register') }}" method="POST">
         <div>
           <label for="email" class="block text-sm font-medium leading-6 text-white">Email address</label>
           <div class="mt-2">
@@ -36,22 +36,15 @@
         <div>
           <div class="flex items-center justify-between">
             <label for="password" class="block text-sm font-medium leading-6 text-white">Password</label>
-            <div class="text-sm">
-              <a href="#" class="font-semibold t-accent">Forgot password?</a>
-            </div>
           </div>
           <div class="mt-2">
             <input id="password" name="pass" type="password" placeholder="Password" autocomplete="current-password" required class="b-input" />
           </div>
         </div>
         <div>
-          <button type="submit" class="b-btn flex leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600">Sign in</button>
+          <button type="submit" class="b-btn flex leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600">Register</button>
         </div>
       </form>
-      <p class="mt-10 text-center text-sm text-white">
-        Do not have an account?
-        <a href="/register" class="font-semibold leading-6 t-accent">Register</a>
-      </p>
     </div>
   </div>
 {% endblock %}

@@ -7,10 +7,35 @@ from flask import (
     make_response,
 )
 from loguru import logger
-from boron.util.authenticator import login as lgn, logout as lgo, get_dev, logged_in
-
+from boron.util.authenticator import (
+    login as lgn,
+    logout as lgo,
+    get_dev,
+    logged_in,
+    register,
+    abort,
+)
+from email.utils import parseaddr
 
 auth = Blueprint("auth", __name__, url_prefix="/auth/")
+
+
+@auth.get("register")
+def get_register():
+    return render_template("/auth/register.html")
+
+
+@auth.post("register")
+def post_register():
+    try:
+        form = request.form
+        email = form.get("email")
+        password = form.get("password")
+        assert parseaddr(email) != ("", "")
+    except Exception:
+        return abort(400)
+    res = register(email, password)
+    return render_template("/auth/register.html")
 
 
 @auth.get("login")
