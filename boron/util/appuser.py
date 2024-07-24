@@ -1,33 +1,49 @@
-from boron.util.db import query, record_exists
+from boron.util.db import query
 from boron.util.general import rnd_str
 from datetime import datetime, timedelta
 import bcrypt
 
 
 def key_valid(license, appid):
-
-    if query("SELECT useLicenseKeys FROM applications WHERE id = :appid", {"appid": appid})[0].useLicenseKeys == 'false':
+    if (
+        query(
+            "SELECT useLicenseKeys FROM applications WHERE id = :appid",
+            {"appid": appid},
+        )[0].useLicenseKeys
+        == "false"
+    ):
         return True
-    
-    licenseKey = query("SELECT * FROM licensekeys WHERE name = :license AND app_id = :appid", {"license": license, "appid": appid})
+
+    licenseKey = query(
+        "SELECT * FROM licensekeys WHERE name = :license AND app_id = :appid",
+        {"license": license, "appid": appid},
+    )
 
     if not licenseKey:
         return {"success": False, "message": "License key does not exist."}
-    
+
     if licenseKey[0].used == 1:
         return {"success": False, "message": "License key has already been used."}
-    
+
     return True
 
+
 def redeem_key(userid, license, appid):
-
-
-    if query("SELECT useLicenseKeys FROM applications WHERE id = :appid", {"appid": appid})[0].useLicenseKeys == 'true':
-        licenseKey = query("SELECT * FROM licensekeys WHERE name = :license AND app_id = :appid", {"license": license, "appid": appid})
+    if (
+        query(
+            "SELECT useLicenseKeys FROM applications WHERE id = :appid",
+            {"appid": appid},
+        )[0].useLicenseKeys
+        == "true"
+    ):
+        licenseKey = query(
+            "SELECT * FROM licensekeys WHERE name = :license AND app_id = :appid",
+            {"license": license, "appid": appid},
+        )
 
         if not licenseKey:
             return {"success": False, "message": "License key does not exist."}
-        
+
         if licenseKey[0].used == 1:
             return {"success": False, "message": "License key has already been used."}
 
@@ -36,10 +52,12 @@ def redeem_key(userid, license, appid):
         expiration_date = datetime.now() + timedelta(days=licenseKey[0].length)
 
         # set key to used
-        query("UPDATE licensekeys SET used = '1' WHERE name = :license AND app_id = :appid;", {"license": license, "appid": appid})
+        query(
+            "UPDATE licensekeys SET used = '1' WHERE name = :license AND app_id = :appid;",
+            {"license": license, "appid": appid},
+        )
     else:
         expiration_date = datetime.now() + timedelta(days=100000)
-    
 
     # apply user to application
     query(
@@ -49,18 +67,21 @@ def redeem_key(userid, license, appid):
 
     return {"success": True}
 
+
 def create(username, password, license, appid):
     # first add user to users table
 
-        # hash password
-    
+    # hash password
+
     # should check if user already exists
 
-    if record_exists("SELECT id FROM users WHERE username = :username;", {"username": username}):
+    if query(
+        "SELECT NULL FROM users WHERE username = :username;", {"username": username}
+    ):
         return {"success": False, "message": "User already exists."}
-    
+
     keyResp = key_valid(license, appid)
-    if keyResp != True:
+    if keyResp is not True:
         return keyResp
 
     hashedPass = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
@@ -71,28 +92,33 @@ def create(username, password, license, appid):
 
     # get user id then redeem key
 
-    user_id = query("SELECT id FROM users WHERE username = :uname;", {"uname": username})[0].id
-
+    user_id = query(
+        "SELECT id FROM users WHERE username = :uname;", {"uname": username}
+    )[0].id
 
     redeemResp = redeem_key(user_id, license, appid)
-    
-    if not redeemResp['success']:
+
+    if not redeemResp["success"]:
         return redeemResp
-    
+
     return {"success": True, "message": "User has been registered successfully."}
 
-def login(username, password, appid):
 
-    if not record_exists("SELECT id FROM users WHERE username = :username;", {"username": username}):
+def login(username, password, appid):
+    if not query(
+        "SELECT NULL FROM users WHERE username = :username;", {"username": username}
+    ):
         return {"success": False, "message": "User does not exist."}
-    
+
     # compare password
 
-    realPass = query("SELECT password FROM users WHERE username = :username;", {"username": username})[0].password
+    realPass = query(
+        "SELECT password FROM users WHERE username = :username;", {"username": username}
+    )[0].password
 
     if not bcrypt.checkpw(password.encode("utf-8"), realPass):  #  invalid password
         return {"success": False, "message": "Your password is incorrect"}
-    
+
     session = rnd_str(15)
 
     query(
@@ -105,14 +131,15 @@ def login(username, password, appid):
         "session": session,
     }  # return session for further manipulation
 
+
 def logout(session, appid):
-    if not record_exists("SELECT id FROM users WHERE session = :sess;", {"sess": session}):
+    if not query("SELECT id FROM users WHERE session = :sess;", {"sess": session}):
         return {"success": False, "message": "Session does not exist"}
-    
+
     query("UPDATE users SET session = '' WHERE session = :sess;", {"sess": session})
 
     return {"success": True}
-    
+
 
 def get_userdata(username, appid):
     userIds = query("SELECT id FROM users WHERE username = :user", {"user": username})
@@ -123,12 +150,16 @@ def get_userdata(username, appid):
         return {"success": False, "message": "Could not find user."}
 
     # chatgpt pls work
-    resp = query("SELECT data FROM app_user WHERE app_id = :appid AND user_id = :userid", {"appid": appid, "userid": userIds[0].id})
+    resp = query(
+        "SELECT data FROM app_user WHERE app_id = :appid AND user_id = :userid",
+        {"appid": appid, "userid": userIds[0].id},
+    )
 
     if not resp:
         return {"success": False, "message": "Could not find user data."}
-    
+
     return resp[0].data
+
 
 def set_userdata(username, appid, data):
     userIds = query("SELECT id FROM users WHERE username = :user", {"user": username})
@@ -137,7 +168,10 @@ def set_userdata(username, appid, data):
 
     if not userIds:
         return {"success": False, "message": "Could not find user."}
-    
-    query("UPDATE app_user SET data = :userdata WHERE user_id = :uid AND app_id = :appid", {"userdata": data, "uid": userIds[0].id, "appid": appid})
-    
+
+    query(
+        "UPDATE app_user SET data = :userdata WHERE user_id = :uid AND app_id = :appid",
+        {"userdata": data, "uid": userIds[0].id, "appid": appid},
+    )
+
     return {"success": True}

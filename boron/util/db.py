@@ -17,9 +17,3 @@ def query_it(query: str, args: dict = {}) -> Iterable[Record]:
     """
     logger.trace(f"database: query = '{query}', args = {args}")
     return current_app.db.query(query, **args)
-
-
-def record_exists(quer: str, args: dict = {}) -> bool:
-    q = query(quer, args)
-
-    return q is not None and len(q) > 0
