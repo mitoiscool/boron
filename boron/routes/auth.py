@@ -30,12 +30,14 @@ def post_register():
     try:
         form = request.form
         email = form.get("email")
-        password = form.get("password")
+        password = form.get("pass")
         assert parseaddr(email) != ("", "")
     except Exception:
         return abort(400)
     res = register(email, password)
-    return render_template("/auth/register.html")
+    if res is not None:
+        return render_template("/auth/register.html", error=res)
+    return redirect(url_for("auth.get_login"))
 
 
 @auth.get("login")
