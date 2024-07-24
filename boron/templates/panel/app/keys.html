@@ -34,7 +34,7 @@
                 <th class="px-8 p-1">Length</th>
                 <th class="px-8 p-1">Creation Date</th>
                 <th class="px-8 p-1">Used</th>
-                <th class="px-8 p-1">Operation</th>
+                <th class="px-8 p-1 select-none">Operation</th>
               </tr>
             </thead>
             <tbody class="overflow-scroll h-48 divide-y divide-solid divide-stone-700">
@@ -53,7 +53,7 @@
                       <input type="checkbox" form="update-key-{{ key.id }}" name="used" />
                     {% endif %}
                   </td>
-                  <td class="px-8">
+                  <td class="px-8 select-none">
                     <button type="submit" form="update-key-{{ key.id }}" class="mx-1 bg-emerald-500 hover:bg-emerald-700 text-white font-bold text-sm rounded-lg p-0.5">Update</button>
                     <button type="submit" form="delete-key-{{ key.id }}" class="mx-1 bg-red-500 hover:bg-red-700 text-white font-bold text-sm rounded-lg p-0.5">Delete</button>
                   </td>
