@@ -145,12 +145,8 @@ def post_app_key(appid) -> Response:
 def update_app_key(appid, keyid) -> Response:
     dev = get_dev()
     form = request.form
-    try:
-        used = form.get("used")
-        assert used in {"on", "off"}
-        used = used == "on"
-    except AssertionError:
-        return abort(400)
+    used = form.get("used")
+    used = used is not None
     update_key(dev, appid, keyid, {"used": used})
     return redirect(url_for("application.get_app_key", appid=appid))
 
