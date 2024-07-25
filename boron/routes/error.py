@@ -12,7 +12,9 @@ def http_401(_):
 
 
 def http_403(_):
-    return render_template("httperr.html", code=403, msg="Forbidden"), 403
+    return render_template(
+        "httperr.html", code=403, msg="Forbidden", url=url_for("auth.get_login")
+    ), 403
 
 
 def http_404(_):

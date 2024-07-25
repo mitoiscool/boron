@@ -54,7 +54,7 @@ def get_app_users(dev, appid: int) -> list:
     ensure_owns_app(dev, appid)
     # query the app-users map to find all uids for this app, then return a list from the raw users table based on uids
     users = query(
-        "SELECT user_id as id, username, expiration FROM app_user JOIN users WHERE app_user.app_id = :app_id AND users.id = app_user.user_id",
+        "SELECT user_id as id, username, expiration, data, session FROM app_user JOIN users WHERE app_user.app_id = :app_id AND users.id = app_user.user_id",
         {"app_id": appid},
     )
     return users

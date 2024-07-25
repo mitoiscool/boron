@@ -6,3 +6,9 @@ reveal = (element) => {
         obj.classList.add("hidden")
     }
 }
+
+toclipboard = (element) => {
+    var text = document.querySelector(element)
+    navigator.clipboard.writeText(text.textContent)
+    alert("Copied to clipboard")
+}

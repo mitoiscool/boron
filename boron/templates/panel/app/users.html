@@ -7,12 +7,14 @@
     {% if users %}
       <div class="">
         <div class="flex-grow overflow-auto">
-          <table class="relative w-full">
+          <table class="relative w-full p-2">
             <thead class="bg-stone-900 sticky top-0 rounded-xl">
               <tr>
                 <th class="px-8 p-1">ID</th>
                 <th class="px-8 p-1">Username</th>
                 <th class="px-8 p-1">Expiration Date</th>
+                <th class="px-8 p-1">Metadata</th>
+                <th class="px-8 p-1">Logged in</th>
               </tr>
             </thead>
             <tbody class="overflow-scroll h-48 divide-y divide-solid divide-stone-700">
@@ -20,7 +22,24 @@
                 <tr>
                   <td class="px-8">{{ user.id }}</td>
                   <td class="px-8">{{ user.username }}</td>
-                  <td class="px-8">{{ user.expiration }}</td>
+                  <td class="px-8">
+                    <script>
+                      d = new Date('{{ user.expiration }}')
+                      document.write(d.toLocaleDateString())
+                      document.write(' ')
+                      document.write(d.toLocaleTimeString())
+                    </script>
+                  </td>
+                  <td class="px-8">
+                    <code id="userdata-{{ user.id }}">{{ user.data }}</code>
+                  </td>
+                  <td class="px-8">
+                    {% if user.session != '' %}
+                      true
+                    {% else %}
+                      false
+                    {% endif %}
+                  </td>
                 </tr>
               {% endfor %}
             </tbody>
