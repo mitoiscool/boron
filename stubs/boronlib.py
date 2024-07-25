@@ -23,7 +23,7 @@ def set_user_data(req, data):
     if not session:
         return {"success": False, "message": "Session not valid. Is the user logged in?"}
     
-    resp = requests.post(url_base + "/user/set", json={
+    resp = requests.post(url_base + "/user/set", data={
         "appid": app_id,
         "session": session,
         "data": data

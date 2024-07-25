@@ -107,7 +107,7 @@ def get_user():
     args:
 
     appid
-    username
+    session
 
     """
     appid = request.form.get("appid")
@@ -143,11 +143,34 @@ def set_user():
         {"session": request.form.get("session")},
     )
 
+    if not appid:
+        return {"success": False, "message": "App id was null."}
+
     if not user:
         return {"success": False, "message": "Could not find session."}
 
     return set_userdata(user[0].username, appid, request.form.get("data"))
 
+@api.post("client/<securekey>/")
+def get_securedata(securekey):
+    appid = request.form.get("app_id")
+    user = query(
+        "SELECT username FROM users WHERE session = :session",
+        {"session": request.form.get("session")},
+    )
+
+    secureData = query("SELECT value FROM secured_data WHERE app_id = :appid", {"appid": appid})
+
+    if not appid:
+        return {"success": False, "message": "App id was null."}
+
+    if not user:
+        return {"success": False, "message": "Could not find session."}
+    
+    if not secureData:
+        return {"success": False, "message": "Could not find secure data."}
+    
+    return {"success": True, "message": secureData[0].value}
 
 @api.post("client/redeem")
 def redeem_user():
@@ -169,3 +192,4 @@ def create_admin(password):
 
     create_user(request.form.get("user"), request.form.get("pass"))
     return "success"
+
